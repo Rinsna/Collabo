@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { motion, useInView, useAnimation } from 'framer-motion';
 import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import LandingNavbar from './LandingNavbar';
 import Footer from '../Layout/Footer';
 import {
@@ -14,6 +15,7 @@ import {
 const InfluencerDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const { data: influencer, isLoading } = useQuery(
     ['influencer-detail', id],
@@ -183,18 +185,22 @@ const InfluencerDetailPage = () => {
                 })}
               </motion.div>
 
-              {/* CTA Button */}
-              <motion.button
-                onClick={() => navigate('/register')}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-2xl transition-all duration-500 shadow-lg">
-                <span className="text-lg">Start Collaboration</span>
-                <ArrowUpRight className="w-5 h-5" />
-              </motion.button>
+              {/* CTA Button - Conditionally Rendered */}
+              {user?.user_type !== 'influencer' && (
+                <motion.button
+                  onClick={() => user?.user_type === 'company' ? navigate('/dashboard') : navigate('/register')}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-2xl transition-all duration-500 shadow-lg">
+                  <span className="text-lg">
+                    {user?.user_type === 'company' ? 'Send Direct Proposal' : 'Start Collaboration'}
+                  </span>
+                  <ArrowUpRight className="w-5 h-5" />
+                </motion.button>
+              )}
             </div>
           </div>
         </div>
@@ -375,23 +381,18 @@ const InfluencerDetailPage = () => {
             <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto mb-12 sm:mb-16">
               Ready to collaborate? Get in touch to discuss your next campaign and create content that resonates.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <motion.button
-                onClick={() => navigate('/register')}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-2xl transition-all duration-500 shadow-lg">
-                <span>Start Campaign</span>
-                <ArrowUpRight className="w-5 h-5" />
-              </motion.button>
-              <motion.button
-                onClick={() => navigate('/login')}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 rounded-full font-semibold border-2 border-indigo-600 hover:bg-indigo-50 transition-all duration-300 shadow-md hover:shadow-lg">
-                Sign In
-              </motion.button>
-            </div>
+            {user?.user_type !== 'influencer' && (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <motion.button
+                  onClick={() => user?.user_type === 'company' ? navigate('/dashboard') : navigate('/register')}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-2xl transition-all duration-500 shadow-lg">
+                  <span>{user?.user_type === 'company' ? 'Send Direct Proposal' : 'Start Campaign'}</span>
+                  <ArrowUpRight className="w-5 h-5" />
+                </motion.button>
+              </div>
+            )}
           </div>
         </section>
       </AnimatedSection>

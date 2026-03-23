@@ -95,6 +95,10 @@ export const AuthProvider = ({ children }) => {
       api.defaults.headers.common['Authorization'] = `Bearer ${access}`;
       
       setUser(user);
+      
+      // Refetch user data to ensure all fields are loaded
+      await fetchUser();
+      
       return { success: true };
     } catch (error) {
       console.error('Registration error:', error);

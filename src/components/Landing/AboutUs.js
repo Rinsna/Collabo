@@ -56,7 +56,7 @@ const AboutUs = () => {
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
         <motion.div
           initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 0.02 } : {}}
+          animate={inView ? { opacity: 0.03 } : {}}
           transition={{ duration: 1.5 }}
           className="text-[15rem] sm:text-[20rem] lg:text-[25rem] font-black text-gray-900 select-none whitespace-nowrap"
           style={{ lineHeight: 1 }}
@@ -66,10 +66,10 @@ const AboutUs = () => {
       </div>
 
       {/* Decorative Top Divider */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
 
       {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
+      <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: `linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)`,
         backgroundSize: '60px 60px'
       }}></div>
@@ -87,18 +87,16 @@ const AboutUs = () => {
           >
             {/* Section Label */}
             <motion.div variants={itemVariants}>
-              <span className="text-xs font-bold text-primary-600 uppercase tracking-[0.2em]">
+              <span className="text-xs font-bold text-accent-600 uppercase tracking-[0.2em] bg-accent-50 px-3 py-1 rounded-full border border-accent-100">
                 ABOUT US
               </span>
-              {/* Thin Divider Line */}
-              <div className="w-16 h-px bg-gray-900 mt-3"></div>
             </motion.div>
 
             {/* Large Bold Heading */}
             <motion.div variants={itemVariants}>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 leading-tight tracking-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 leading-tight tracking-tight mt-4">
                 Connecting Brands with{' '}
-                <span className="text-primary-600">Authentic Voices</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">Authentic Voices</span>
               </h2>
             </motion.div>
 
@@ -113,32 +111,28 @@ const AboutUs = () => {
             </motion.div>
 
             {/* Stats Grid */}
-            <motion.div variants={itemVariants} className="grid grid-cols-3 gap-4 pt-4">
+            <motion.div variants={itemVariants} className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
               {stats.map((stat, index) => {
                 const StatIcon = stat.icon;
                 return (
                   <div key={index} className="text-center lg:text-left">
-                    <div className="flex items-center justify-center lg:justify-start mb-2">
-                      <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <StatIcon className="w-4 h-4 text-gray-900" />
+                    <div className="flex items-center justify-center lg:justify-start mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center">
+                        <StatIcon className="w-5 h-5 text-accent-500" />
                       </div>
                     </div>
                     <div className="text-2xl font-black text-gray-900">{stat.value}</div>
-                    <div className="text-xs text-gray-600 mt-1">{stat.label}</div>
+                    <div className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">{stat.label}</div>
                   </div>
                 );
               })}
             </motion.div>
 
             {/* CTA Button */}
-            <motion.div variants={itemVariants} className="pt-4">
-              <button className="group relative inline-flex items-center space-x-2 text-gray-900 font-semibold text-base">
-                <span className="relative">
-                  Learn More About Us
-                  {/* Animated Underline */}
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 transform origin-left transition-transform duration-300 group-hover:scale-x-110"></span>
-                </span>
-                <ArrowRight className="w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300" />
+            <motion.div variants={itemVariants} className="pt-6">
+              <button className="group relative inline-flex items-center space-x-2 text-gray-900 font-semibold text-base py-3 px-6 bg-white rounded-full border border-gray-200 hover:border-gray-300 transition-all hover:bg-gray-50 shadow-sm">
+                <span>Discover our story</span>
+                <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300 text-accent-500" />
               </button>
             </motion.div>
           </motion.div>
@@ -148,36 +142,36 @@ const AboutUs = () => {
             variants={imageVariants}
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
-            className="relative"
+            className="relative mt-8 lg:mt-0"
           >
             {/* Decorative Background Shape */}
-            <div className="absolute -inset-3 bg-gradient-to-br from-primary-100 to-accent-100 rounded-3xl opacity-20 blur-2xl"></div>
+            <div className="absolute -inset-3 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl opacity-10 blur-2xl"></div>
 
             {/* Main Image Container */}
             <div className="relative group">
               {/* Image Wrapper */}
-              <div className="relative overflow-hidden rounded-xl shadow-xl">
+              <div className="relative overflow-hidden rounded-[32px] shadow-2xl border border-gray-100">
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
                   className="relative aspect-[4/5] max-w-md mx-auto"
                 >
-                  {/* About Us Image */}
                   <img
-                    src="/images/about-collabo.jpg"
-                    alt="Collabo Platform - Influencer Marketing Dashboard"
-                    className="w-full h-full object-cover"
+                    src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+                    alt="Collabo Platform"
+                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent opacity-80" />
                 </motion.div>
               </div>
 
               {/* Decorative Corner Element */}
-              <div className="absolute -bottom-3 -right-3 w-20 h-20 border-4 border-gray-900 rounded-xl -z-10"></div>
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-accent-200 rounded-[20px] -z-10"></div>
               
               {/* Decorative Dot Pattern */}
-              <div className="absolute -top-3 -left-3 w-16 h-16 grid grid-cols-4 gap-1.5 -z-10">
+              <div className="absolute -top-4 -left-4 w-20 h-20 grid grid-cols-4 gap-2 -z-10 opacity-30">
                 {[...Array(16)].map((_, i) => (
-                  <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                  <div key={i} className="w-1.5 h-1.5 bg-accent-500 rounded-full"></div>
                 ))}
               </div>
             </div>
@@ -187,15 +181,15 @@ const AboutUs = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: 0.8, duration: 0.5 }}
-              className="absolute -bottom-3 -left-3 bg-white rounded-xl shadow-xl p-2.5 border border-gray-200"
+              className="absolute -bottom-6 -left-6 bg-white/90 backdrop-blur-md rounded-[20px] shadow-xl p-4 border border-gray-100"
             >
-              <div className="flex items-center space-x-2">
-                <div className="w-7 h-7 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <Award className="w-3.5 h-3.5 text-white" />
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center shadow-md">
+                  <Award className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <div className="text-base font-black text-gray-900">5+ Years</div>
-                  <div className="text-xs text-gray-600">Experience</div>
+                  <div className="text-xl font-black text-gray-900">5+ Years</div>
+                  <div className="text-sm text-gray-600 font-medium">Industry Experience</div>
                 </div>
               </div>
             </motion.div>
@@ -204,7 +198,7 @@ const AboutUs = () => {
       </div>
 
       {/* Bottom Decorative Divider */}
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
     </section>
   );
 };

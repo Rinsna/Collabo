@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import api from '../../services/api';
-import { DollarSign, Users, Calendar, Star, TrendingUp, Award, Heart, BarChart3, Link2 } from 'lucide-react';
+import { DollarSign, Users, Calendar, Star, TrendingUp, Award, Heart, BarChart3, Link2, Headphones } from 'lucide-react';
 import ProfileSetup from '../Profile/InfluencerProfile';
 import CollaborationList from '../Collaborations/CollaborationList';
 import InfluencerAnalytics from '../Analytics/InfluencerAnalytics';
 import InfluencerHero from '../Influencer/InfluencerHero';
+import ApprovalStatusAlert from './ApprovalStatusAlert';
+import ApprovalSuccessModal from './ApprovalSuccessModal';
+import MySupportTickets from '../Support/MySupportTickets';
+import { useAuth } from '../../contexts/AuthContext';
 
 const InfluencerDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const { user } = useAuth();
 
   const { data: profile } = useQuery('influencer-profile', () =>
     api.get('/auth/influencer-profile/').then(res => {
@@ -26,6 +32,17 @@ const InfluencerDashboard = () => {
     api.get('/collaborations/collaborations/').then(res => res.data)
   );
 
+  // Check if approval modal should be shown
+  useEffect(() => {
+    console.log('InfluencerDashboard - User data:', user);
+    console.log('InfluencerDashboard - Approval status:', user?.approval_status);
+    console.log('InfluencerDashboard - Approval shown:', user?.approval_shown);
+    
+    if (user && user.approval_status === 'approved' && !user.approval_shown) {
+      setShowApprovalModal(true);
+    }
+  }, [user]);
+
   // Handle tab change with scroll to top
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
@@ -38,6 +55,7 @@ const InfluencerDashboard = () => {
     { id: 'profile', label: 'Profile', icon: Users },
     { id: 'collaborations', label: 'My Collaborations', icon: Heart },
     { id: 'affiliate', label: 'Affiliated Marketing', icon: Link2 },
+    { id: 'support', label: 'Support', icon: Headphones },
   ];
 
   const stats = [
@@ -137,6 +155,15 @@ const InfluencerDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Approval Status Alert - Show on all tabs */}
+      {user && (user.approval_status === 'pending' || user.approval_status === 'rejected') && (
+        <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-16 pt-6">
+          <ApprovalStatusAlert 
+            status={user.approval_status}
+          />
+        </div>
+      )}
 
       {activeTab === 'overview' && (
         <>
@@ -425,6 +452,18 @@ const InfluencerDashboard = () => {
             </div>
           </div>
       )}
+
+      {activeTab === 'support' && (
+        <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-16 py-6 sm:py-8">
+          <MySupportTickets />
+        </div>
+      )}
+
+      {/* Approval Success Modal */}
+      <ApprovalSuccessModal 
+        isOpen={showApprovalModal}
+        onClose={() => setShowApprovalModal(false)}
+      />
     </div>
   );
 };

@@ -12,7 +12,10 @@ import CompanyDashboard from './components/Dashboard/CompanyDashboard';
 import AdminDashboard from './components/Dashboard/AdminDashboard';
 import Layout from './components/Layout/Layout';
 import LandingPage from './components/Landing/LandingPage';
+import AboutPage from './components/Landing/AboutPage';
+import ServicesPage from './components/Landing/ServicesPage';
 import InfluencerDetailPage from './components/Landing/InfluencerDetailPage';
+import CreatorsPage from './components/Landing/CreatorsPage';
 import OAuthCallback from './components/SocialMedia/OAuthCallback';
 
 function ProtectedRoute({ children, allowedUserTypes }) {
@@ -40,6 +43,9 @@ function AppRoutes() {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/services" element={<ServicesPage />} />
+      <Route path="/creators" element={<CreatorsPage />} />
       <Route path="/influencer/:id" element={<InfluencerDetailPage />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
@@ -103,7 +109,7 @@ function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <div className="App">
             <AppRoutes />
             <ToastContainerWrapper />

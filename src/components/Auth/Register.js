@@ -12,7 +12,8 @@ import {
   Sparkles,
   Users,
   Building2,
-  CheckCircle
+  CheckCircle,
+  Home
 } from 'lucide-react';
 
 const Register = () => {
@@ -73,6 +74,17 @@ const Register = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-primary-700 to-accent-600 rounded-full opacity-10 blur-3xl"></div>
       </div>
 
+      {/* Home Button - Fixed at left */}
+      <div className="absolute top-8 left-8 z-20">
+        <Link
+          to="/"
+          className="inline-flex items-center px-3.5 py-2 border border-dark-100/20 text-sm font-medium rounded-lg text-dark-100 bg-dark-700/30 hover:bg-dark-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] group"
+        >
+          <Home className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
+          Back to Home
+        </Link>
+      </div>
+
       <div className="max-w-md w-full space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center">
@@ -86,10 +98,10 @@ const Register = () => {
               </div>
             </div>
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-dark-100 to-dark-200 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
             Create your account
           </h2>
-          <p className="mt-2 text-dark-200">
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
             Join thousands of brands and influencers
           </p>
         </div>
@@ -99,7 +111,7 @@ const Register = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* User Type Selection */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-dark-100">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 I am a
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -108,7 +120,7 @@ const Register = () => {
                   onClick={() => setFormData({ ...formData, user_type: 'influencer' })}
                   className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${formData.user_type === 'influencer'
                       ? 'border-accent-500 bg-accent-500/10'
-                      : 'border-dark-100/20 bg-dark-700/30 hover:bg-dark-700/50'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                 >
                   {formData.user_type === 'influencer' && (
@@ -116,9 +128,9 @@ const Register = () => {
                       <CheckCircle className="w-4 h-4 text-white" />
                     </div>
                   )}
-                  <Users className={`w-8 h-8 mb-2 ${formData.user_type === 'influencer' ? 'text-accent-500' : 'text-dark-300'
+                  <Users className={`w-8 h-8 mb-2 ${formData.user_type === 'influencer' ? 'text-accent-500' : 'text-gray-400'
                     }`} />
-                  <span className={`text-sm font-medium ${formData.user_type === 'influencer' ? 'text-dark-100' : 'text-dark-200'
+                  <span className={`text-sm font-medium ${formData.user_type === 'influencer' ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'
                     }`}>
                     Influencer
                   </span>
@@ -129,7 +141,7 @@ const Register = () => {
                   onClick={() => setFormData({ ...formData, user_type: 'company' })}
                   className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${formData.user_type === 'company'
                       ? 'border-primary-600 bg-primary-600/10'
-                      : 'border-dark-100/20 bg-dark-700/30 hover:bg-dark-700/50'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                 >
                   {formData.user_type === 'company' && (
@@ -137,9 +149,9 @@ const Register = () => {
                       <CheckCircle className="w-4 h-4 text-white" />
                     </div>
                   )}
-                  <Building2 className={`w-8 h-8 mb-2 ${formData.user_type === 'company' ? 'text-primary-600' : 'text-dark-300'
+                  <Building2 className={`w-8 h-8 mb-2 ${formData.user_type === 'company' ? 'text-primary-600' : 'text-gray-400'
                     }`} />
-                  <span className={`text-sm font-medium ${formData.user_type === 'company' ? 'text-dark-100' : 'text-dark-200'
+                  <span className={`text-sm font-medium ${formData.user_type === 'company' ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'
                     }`}>
                     Company
                   </span>
@@ -149,19 +161,19 @@ const Register = () => {
 
             {/* Email Field */}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-dark-100">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 Email address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-dark-300" />
+                  <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-dark-100/20 rounded-xl text-dark-100 placeholder-dark-300 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-dark-700/50 hover:bg-dark-700/70 focus:bg-dark-700"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -171,19 +183,19 @@ const Register = () => {
 
             {/* Username Field */}
             <div className="space-y-2">
-              <label htmlFor="username" className="text-sm font-medium text-dark-100">
+              <label htmlFor="username" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-dark-300" />
+                  <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   id="username"
                   name="username"
                   type="text"
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-dark-100/20 rounded-xl text-dark-100 placeholder-dark-300 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-dark-700/50 hover:bg-dark-700/70 focus:bg-dark-700"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                   placeholder="Choose a username"
                   value={formData.username}
                   onChange={handleChange}
@@ -193,19 +205,19 @@ const Register = () => {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-dark-100">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-dark-300" />
+                  <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="block w-full pl-10 pr-12 py-3 border border-dark-100/20 rounded-xl text-dark-100 placeholder-dark-300 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-dark-700/50 hover:bg-dark-700/70 focus:bg-dark-700"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                   placeholder="Create a password"
                   value={formData.password}
                   onChange={handleChange}
@@ -216,9 +228,9 @@ const Register = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-dark-300 hover:text-dark-200" />
+                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                   ) : (
-                    <Eye className="h-5 w-5 text-dark-300 hover:text-dark-200" />
+                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                   )}
                 </button>
               </div>
@@ -226,19 +238,19 @@ const Register = () => {
 
             {/* Confirm Password Field */}
             <div className="space-y-2">
-              <label htmlFor="password_confirm" className="text-sm font-medium text-dark-100">
+              <label htmlFor="password_confirm" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 Confirm Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-dark-300" />
+                  <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   id="password_confirm"
                   name="password_confirm"
                   type={showPassword2 ? 'text' : 'password'}
                   required
-                  className="block w-full pl-10 pr-12 py-3 border border-dark-100/20 rounded-xl text-dark-100 placeholder-dark-300 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-dark-700/50 hover:bg-dark-700/70 focus:bg-dark-700"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                   placeholder="Confirm your password"
                   value={formData.password_confirm}
                   onChange={handleChange}
@@ -249,9 +261,9 @@ const Register = () => {
                   onClick={() => setShowPassword2(!showPassword2)}
                 >
                   {showPassword2 ? (
-                    <EyeOff className="h-5 w-5 text-dark-300 hover:text-dark-200" />
+                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                   ) : (
-                    <Eye className="h-5 w-5 text-dark-300 hover:text-dark-200" />
+                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                   )}
                 </button>
               </div>
@@ -281,10 +293,10 @@ const Register = () => {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-dark-100/20"></div>
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-dark-700 text-dark-200">Already have an account?</span>
+                <span className="px-2 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300">Already have an account?</span>
               </div>
             </div>
           </div>
@@ -293,7 +305,7 @@ const Register = () => {
           <div className="mt-6">
             <Link
               to="/login"
-              className="w-full flex justify-center items-center py-3 px-4 border border-dark-100/20 text-sm font-medium rounded-xl text-dark-100 bg-dark-700/30 hover:bg-dark-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] group"
+              className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] group"
             >
               Sign in instead
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
@@ -303,7 +315,7 @@ const Register = () => {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-xs text-dark-300">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             By creating an account, you agree to our{' '}
             <a href="#" className="text-accent-500 hover:text-accent-400">
               Terms of Service

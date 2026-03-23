@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { useInView } from 'framer-motion';
 import api from '../../services/api';
-import { Users, Star, ArrowRight, CheckCircle, Zap, Target, Heart } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Users, Star, ArrowRight, CheckCircle, Zap, Target, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import LandingNavbar from './LandingNavbar';
-import AboutUs from './AboutUs';
-import OurServices from './OurServices';
+import ModernHero from './ModernHero';
+import AnimatedTextSection from './AnimatedTextSection';
+import CatalogFlipSection from './CatalogFlipSection';
 import Footer from '../Layout/Footer';
 
 const CATEGORIES = [
@@ -22,83 +23,115 @@ const CATEGORIES = [
   { id: 'health', name: 'Health', icon: '🏥' }
 ];
 
+const InfluencerCarouselRow = ({ influencers, onInfluencerClick }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const cardsPerPage = 4;
+  const maxIndex = Math.max(0, influencers.length - cardsPerPage);
+
+  const handlePrev = () => setCurrentIndex(prev => (prev > 0 ? prev - 1 : 0));
+  const handleNext = () => setCurrentIndex(prev => (prev < maxIndex ? prev + 1 : maxIndex));
+  
+  const displayed = influencers.slice(currentIndex, currentIndex + cardsPerPage);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [influencers]);
+
+  if (influencers.length === 0) return null;
+
+  return (
+    <div className="relative group/carousel w-full py-4 px-4 sm:px-14 scroll-animate opacity-0 transition-opacity duration-1000 mb-6 sm:mb-8">
+      {currentIndex > 0 && (
+        <button 
+          onClick={handlePrev}
+          className="absolute left-0 sm:-left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white backdrop-blur-md border border-gray-200 shadow-xl flex items-center justify-center hover:bg-gray-50 hover:text-accent-600 transition-all duration-300 hover:scale-110 opacity-0 group-hover/carousel:opacity-100"
+        >
+          <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700 hover:text-accent-600" />
+        </button>
+      )}
+      
+      <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-6 h-auto sm:h-[450px]">
+        {displayed.map((influencer, index) => (
+          <div key={influencer.id} onClick={() => onInfluencerClick(influencer)}
+            className="cursor-pointer group relative flex-1 hover:flex-[3] transition-all duration-700 ease-in-out rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl border border-gray-100/50 min-h-[400px] sm:min-h-0"
+            style={{ animationDelay: `${index * 0.05}s` }}>
+            
+            <div className="absolute inset-0 bg-gray-100">
+              {influencer.profile_image ? (
+                <img src={influencer.profile_image} alt={influencer.username}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+              ) : null}
+              <div className="w-full h-full bg-gradient-to-tr from-accent-100 to-primary-100 flex items-center justify-center text-gray-400 text-6xl font-black"
+                style={{ display: influencer.profile_image ? 'none' : 'flex' }}>
+                {influencer.username ? influencer.username.charAt(0).toUpperCase() : 'C'}
+              </div>
+            </div>
+            
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/5 opacity-80 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 text-white z-10 transition-transform duration-700 ease-out transform translate-y-2 group-hover:translate-y-0">
+              <div className="flex items-center space-x-2 mb-3">
+                <span className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white/90 border border-white/20">
+                  {influencer.category || 'Creator'}
+                </span>
+                {influencer.followers_count >= 10000 && (
+                  <span className="bg-yellow-500/20 backdrop-blur-md px-2 py-1.5 rounded-full flex items-center space-x-1 border border-yellow-500/30">
+                    <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                  </span>
+                )}
+              </div>
+              
+              <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2 truncate group-hover:whitespace-normal relative z-10 transition-all duration-700 group-hover:text-accent-300">
+                @{influencer.username}
+              </h3>
+              
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 opacity-0 group-hover:opacity-100 h-0 group-hover:h-auto overflow-hidden transition-all duration-700 ease-in-out transform translate-y-4 group-hover:translate-y-0 mt-2">
+                <div className="flex items-center space-x-2">
+                  <Users className="h-5 w-5 text-accent-400" />
+                  <span className="font-bold text-lg">
+                    {influencer.followers_count >= 1000000 ? `${(influencer.followers_count / 1000000).toFixed(1)}M`
+                      : influencer.followers_count >= 1000 ? `${(influencer.followers_count / 1000).toFixed(1)}K`
+                        : influencer.followers_count?.toLocaleString() || 0}
+                  </span>
+                </div>
+                {influencer.rate_per_post > 0 && (
+                  <div className="flex items-center space-x-2 sm:border-l border-white/20 sm:pl-4">
+                    <span className="text-white/60 text-xs uppercase tracking-wider font-semibold">Starts at</span>
+                    <span className="font-bold text-accent-400">₹{influencer.rate_per_post >= 1000 ? `${(influencer.rate_per_post / 1000).toFixed(1)}K` : influencer.rate_per_post.toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {currentIndex < maxIndex && (
+        <button 
+          onClick={handleNext}
+          className="absolute right-0 sm:-right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white backdrop-blur-md border border-gray-200 shadow-xl flex items-center justify-center hover:bg-gray-50 hover:text-accent-600 transition-all duration-300 hover:scale-110 opacity-0 group-hover/carousel:opacity-100"
+        >
+          <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700 hover:text-accent-600" />
+        </button>
+      )}
+    </div>
+  );
+};
+
 const LandingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showAllInfluencers, setShowAllInfluencers] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const observerRef = useRef(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const carouselRef = useRef(null);
-  const isCarouselInView = useInView(carouselRef, { amount: 0.3 });
-  const [animationKey, setAnimationKey] = useState(0);
 
   const handleSearch = (query) => {
-    setSearchQuery(query);
-    setSelectedCategory('all');
+    if (query && query.trim() !== '') {
+      navigate('/creators', { state: { searchQuery: query } });
+    }
   };
-
-  const carouselSlides = [
-    {
-      id: 1,
-      title: 'Connect with Top Influencers',
-      titleParts: [
-        { text: 'Connect with Top ', color: 'text-white' },
-        { text: 'Influencers', color: 'text-accent-400' }
-      ],
-      subtitle: 'Find the perfect creator for your brand campaign',
-      cta: 'Get Started',
-      gradient: 'from-primary-600 to-accent-500',
-      image: '/images/carousel-influencer.jpg',
-      isImageUrl: true
-    },
-    {
-      id: 2,
-      title: 'Grow Your Brand Reach',
-      titleParts: [
-        { text: 'Grow Your ', color: 'text-white' },
-        { text: 'Brand', color: 'text-accent-400' },
-        { text: ' Reach', color: 'text-white' }
-      ],
-      subtitle: 'Collaborate with authentic voices in your industry',
-      cta: 'Explore Now',
-      gradient: 'from-accent-500 to-primary-600',
-      image: '📈',
-      isImageUrl: false
-    },
-    {
-      id: 3,
-      title: 'Seamless Collaboration',
-      titleParts: [
-        { text: 'Seamless ', color: 'text-white' },
-        { text: 'Collaboration', color: 'text-accent-400' }
-      ],
-      subtitle: 'Manage campaigns and track results in one platform',
-      cta: 'Learn More',
-      gradient: 'from-primary-700 to-accent-600',
-      image: '/images/carousel-collaboration.jpg',
-      isImageUrl: true
-    }
-  ];
-
-  // Auto-play carousel - continuously changes every 3 seconds
-  useEffect(() => {
-    if (isPaused) return;
-    
-    const timer = setInterval(() => {
-      setCurrentSlide((prevSlide) => (prevSlide + 1) % 3);
-    }, 3000); // Changed to 3000ms (3 seconds)
-    
-    return () => clearInterval(timer);
-  }, [isPaused]);
-
-  // Reset animations when carousel comes back into view
-  useEffect(() => {
-    if (isCarouselInView) {
-      setAnimationKey(prev => prev + 1);
-    }
-  }, [isCarouselInView]);
 
   const { data: influencersData, isLoading } = useQuery(
     ['landing-influencers', selectedCategory],
@@ -117,22 +150,26 @@ const LandingPage = () => {
   const influencers = influencersData?.results || [];
   
   // Filter influencers by search query
-  const filteredInfluencers = searchQuery
+  const filteredInfluencers = searchQuery && searchQuery.trim() !== ''
     ? influencers.filter(inf => 
         inf.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inf.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inf.bio?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : influencers;
-  
-  const displayedInfluencers = showAllInfluencers ? filteredInfluencers : filteredInfluencers.slice(0, 12);
 
-  console.log('Influencers Data:', {
-    isLoading,
-    influencersCount: influencers.length,
-    displayedCount: displayedInfluencers.length,
-    rawData: influencersData
-  });
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      setTimeout(() => {
+        const element = document.getElementById(location.state.scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Clear state after scrolling
+          navigate(location.pathname, { replace: true, state: {} });
+        }
+      }, 500); // Wait for components to mount
+    }
+  }, [location.state, navigate]);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -140,19 +177,20 @@ const LandingPage = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('animate-fade-in-up');
+            entry.target.classList.remove('opacity-0');
           }
         });
       },
       { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
-    const cards = document.querySelectorAll('.scroll-animate');
-    cards.forEach((card) => observerRef.current?.observe(card));
+    const elements = document.querySelectorAll('.scroll-animate');
+    elements.forEach((el) => observerRef.current?.observe(el));
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
     };
-  }, [displayedInfluencers]);
+  }, [filteredInfluencers]);
 
   const handleInfluencerClick = (influencer) => {
     navigate(`/influencer/${influencer.id}`);
@@ -167,396 +205,210 @@ const LandingPage = () => {
   };
 
   const handleViewAll = () => {
-    setShowAllInfluencers(true);
-  };
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
+    navigate('/creators');
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white/95 relative overflow-hidden selection:bg-primary-100 selection:text-primary-900">
       <LandingNavbar onSearch={handleSearch} />
-      <section className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between space-x-2 py-2 max-w-full overflow-x-auto scrollbar-hide">
-            {CATEGORIES.map((category) => (
-              <button key={category.id} onClick={() => handleCategoryClick(category.id)}
-                className={`flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-full whitespace-nowrap transition-all duration-200 flex-1 min-w-fit ${selectedCategory === category.id ? 'bg-primary-600 text-white shadow-lg' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}>
-                <span className="text-xs font-medium">{category.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Carousel Section */}
-      <section 
-        ref={carouselRef}
-        className="relative w-full bg-white overflow-hidden">
-        <div className="relative h-[450px] sm:h-[520px] md:h-[580px] lg:h-[650px] xl:h-[700px]">
-          {carouselSlides.map((slide, index) => (
-            <div
-              key={`${slide.id}-${animationKey}`}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                }`}>
-              <div className={`w-full h-full bg-gradient-to-r ${slide.gradient} flex items-center justify-center relative overflow-hidden`}>
-                {/* Subtle background pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-                    backgroundSize: '40px 40px'
-                  }}></div>
-                </div>
+      {/* Vibrant Branded Glassmorphic Background Blobs */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <motion.div 
+          animate={{ 
+            x: [0, 60, 0], 
+            y: [0, 40, 0],
+            scale: [1, 1.25, 1] 
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[10%] -left-[10%] w-[80%] h-[80%] bg-[#8915A0]/15 rounded-full blur-[120px]" 
+        />
+        <motion.div 
+          animate={{ 
+            x: [0, -60, 0], 
+            y: [0, -40, 0],
+            scale: [1, 1.3, 1] 
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-[10%] -right-[5%] w-[70%] h-[70%] bg-[#EC4899]/12 rounded-full blur-[100px]" 
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.3, 1],
+            opacity: [0.08, 0.15, 0.08]
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-primary-200/20 rounded-full blur-[140px]" 
+        />
+        <div className="absolute inset-0 backdrop-blur-[60px] bg-white/10" />
+      </div>
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 w-full relative z-10">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-16 items-center h-full py-8 sm:py-10 md:py-12">
-                    {/* Text Content */}
-                    <div className="text-white text-center lg:text-left order-2 lg:order-1">
-                      <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight transition-all duration-700 ${index === currentSlide ? 'animate-slide-in-left' : 'opacity-0'
-                        }`}>
-                        {slide.titleParts.map((part, partIndex) => (
-                          <span key={partIndex} className={part.color}>
-                            {part.text}
-                          </span>
-                        ))}
-                      </h2>
-                      <p className={`text-sm sm:text-base md:text-lg lg:text-xl text-white/95 mb-4 sm:mb-5 md:mb-6 leading-relaxed transition-all duration-700 delay-100 ${index === currentSlide ? 'animate-slide-in-left' : 'opacity-0'
-                        }`}>
-                        {slide.subtitle}
-                      </p>
-                      <button
-                        onClick={() => navigate('/register')}
-                        className={`bg-white text-primary-600 px-5 sm:px-6 md:px-7 lg:px-8 py-2.5 sm:py-3 md:py-3.5 rounded-2xl font-semibold text-sm sm:text-base md:text-lg hover:bg-gray-50 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105 inline-flex items-center space-x-2 ${index === currentSlide ? 'animate-slide-in-left delay-200' : 'opacity-0'
-                          }`}>
-                        <span>{slide.cta}</span>
-                        <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </button>
-                    </div>
+      <div className="relative z-10 font-sans">
+        <ModernHero />
 
-                    {/* Image Content */}
-                    <div className="flex items-center justify-center order-1 lg:order-2">
-                      {slide.isImageUrl ? (
-                        <div className={`relative w-full max-w-[200px] sm:max-w-[260px] md:max-w-[320px] lg:max-w-[380px] xl:max-w-[440px] aspect-square transition-all duration-1000 ${index === currentSlide ? 'animate-zoom-fade-in' : 'opacity-0 scale-95'
-                          }`}>
-                          {/* Decorative background circle */}
-                          <div className="absolute inset-0 bg-white/10 rounded-full blur-3xl scale-110"></div>
-
-                          {/* Image container with enhanced styling */}
-                          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl">
-                            <img
-                              src={slide.image}
-                              alt={slide.title}
-                              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
-                            />
-                            {/* Subtle overlay gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-                          </div>
-
-                          {/* Decorative floating elements */}
-                          <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/20 rounded-full blur-xl animate-pulse"></div>
-                          <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-white/15 rounded-full blur-xl animate-pulse delay-300"></div>
-                        </div>
-                      ) : (
-                        <div className={`w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl transition-all duration-1000 ${index === currentSlide ? 'animate-zoom-fade-in' : 'opacity-0 scale-95'
-                          }`}>
-                          <span className="text-8xl sm:text-9xl lg:text-[10rem]">{slide.image}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {/* Navigation Arrows */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-2 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm text-white p-2 sm:p-3 md:p-4 rounded-full hover:bg-white/30 transition-all duration-200 shadow-lg"
-            aria-label="Previous slide">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-2 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm text-white p-2 sm:p-3 md:p-4 rounded-full hover:bg-white/30 transition-all duration-200 shadow-lg"
-            aria-label="Next slide">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      </section>
-
-      <section id="influencers-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-          <div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              {searchQuery 
-                ? `Search Results for "${searchQuery}"` 
-                : selectedCategory === 'all' 
-                  ? 'Top Influencers' 
-                  : `Top ${CATEGORIES.find(c => c.id === selectedCategory)?.name} Influencers`}
-            </h2>
-            <p className="text-sm sm:text-base text-gray-900">
-              {searchQuery 
-                ? `Found ${filteredInfluencers.length} influencer${filteredInfluencers.length !== 1 ? 's' : ''}` 
-                : 'Discover creators who match your vision'}
-            </p>
-          </div>
-          {!showAllInfluencers && influencers.length > 12 && (
-            <button onClick={handleViewAll} className="hidden sm:flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-semibold transition-colors text-sm md:text-base">
-              <span>View All</span>
-              <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
-            </button>
-          )}
-        </div>
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="bg-white rounded-3xl p-4 shadow-sm border border-gray-200 animate-pulse">
-                <div className="w-full aspect-square bg-gray-200 rounded-2xl mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-              </div>
-            ))}
-          </div>
-        ) : displayedInfluencers.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {displayedInfluencers.map((influencer, index) => (
-              <div key={influencer.id} onClick={() => handleInfluencerClick(influencer)}
-                className="scroll-animate opacity-0 cursor-pointer group"
-                style={{ animationDelay: `${index * 0.05}s` }}>
-                <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 h-full flex flex-col">
-                  <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-primary-100 to-accent-100">
-                    {influencer.profile_image ? (
-                      <img src={influencer.profile_image} alt={influencer.username}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                    ) : null}
-                    <div className="w-full h-full bg-gradient-to-br from-primary-500 to-accent-400 flex items-center justify-center text-white text-5xl font-bold"
-                      style={{ display: influencer.profile_image ? 'none' : 'flex' }}>
-                      {influencer.username ? influencer.username.charAt(0).toUpperCase() : 'U'}
-                    </div>
-                    {influencer.followers_count > 10000 && (
-                      <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm p-1.5 rounded-full shadow-lg">
-                        <Star className="h-3.5 w-3.5 text-primary-600 fill-current" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3 flex-1 flex flex-col">
-                    <h3 className="text-base font-bold text-gray-900 mb-1 truncate group-hover:text-primary-600 transition-colors">
-                      {influencer.username}
-                    </h3>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-900 capitalize">
-                        {influencer.category || 'Creator'}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-1.5 text-gray-900 mb-2">
-                      <Users className="h-3.5 w-3.5 text-primary-600" />
-                      <span className="text-xs font-semibold">
-                        {influencer.followers_count >= 1000000 ? `${(influencer.followers_count / 1000000).toFixed(1)}M`
-                          : influencer.followers_count >= 1000 ? `${(influencer.followers_count / 1000).toFixed(1)}K`
-                            : influencer.followers_count?.toLocaleString() || 0}
-                      </span>
-                      <span className="text-xs text-gray-900">followers</span>
-                    </div>
-                    {influencer.rate_per_post > 0 && (
-                      <div className="mt-auto flex items-center space-x-1 text-xs text-primary-600 bg-primary-50 rounded-lg px-2 py-1">
-                        <span className="font-semibold">
-                          ₹{influencer.rate_per_post >= 1000
-                            ? `${(influencer.rate_per_post / 1000).toFixed(1)}K`
-                            : influencer.rate_per_post.toLocaleString()}
+        <section id="influencers-grid" className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-12 gap-4">
+            <div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-3 tracking-tight">
+                {(() => {
+                  const text = searchQuery && searchQuery.trim() !== ''
+                    ? `Search Results for "${searchQuery}"` 
+                    : selectedCategory === 'all' 
+                      ? 'Top {Creators}' 
+                      : `Top {${CATEGORIES.find(c => c.id === selectedCategory)?.name}} Creators`;
+                  
+                  const parts = text.split(/({.*?})/);
+                  return parts.map((part, index) => {
+                    if (part.startsWith('{') && part.endsWith('}')) {
+                      const inner = part.slice(1, -1);
+                      return (
+                        <span 
+                          key={index}
+                          style={{
+                            background: 'linear-gradient(to right, #8915A0, #DB2777, #8915A0)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            backgroundSize: '200% auto',
+                            color: 'transparent',
+                          }}
+                          className="animate-gradient-x inline-block"
+                        >
+                          {inner}
                         </span>
-                        <span className="text-gray-900">per post</span>
-                      </div>
-                    )}
+                      );
+                    }
+                    return <span key={index}>{part}</span>;
+                  });
+                })()}
+              </h2>
+              <p className="text-base sm:text-lg text-gray-600">
+                {searchQuery && searchQuery.trim() !== ''
+                  ? `Found ${filteredInfluencers.length} creator${filteredInfluencers.length !== 1 ? 's' : ''}` 
+                  : 'Discover and collaborate with the perfect match for your brand'}
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              {!showAllInfluencers && influencers.length > 8 && (
+                <button onClick={handleViewAll} className="hidden sm:flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-semibold transition-colors text-sm md:text-base">
+                  <span>View All</span>
+                  <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="bg-white/40 backdrop-blur-md rounded-[24px] p-4 border border-white/50 animate-pulse shadow-sm">
+                  <div className="w-full aspect-square bg-gray-100/50 rounded-[16px] mb-4"></div>
+                  <div className="h-4 bg-gray-100/50 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-50/50 rounded w-2/3"></div>
+                </div>
+              ))}
+            </div>
+          ) : filteredInfluencers.length > 0 ? (
+            <div className="flex flex-col space-y-4 sm:space-y-6">
+              <InfluencerCarouselRow influencers={filteredInfluencers} onInfluencerClick={handleInfluencerClick} />
+            </div>
+          ) : (
+            <div className="text-center py-32 bg-white/40 backdrop-blur-md rounded-[32px] border border-white/50 shadow-sm">
+              <div className="w-20 h-20 bg-gray-200/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="h-10 w-10 text-gray-400" />
+              </div>
+              <p className="text-gray-900 text-xl font-bold mb-2">No creators found</p>
+              <p className="text-gray-600">Try adjusting your filters or search terms</p>
+            </div>
+          )}
+        </section>
+
+        <AnimatedTextSection />
+
+        <section className="bg-transparent py-24 relative overflow-hidden mt-12">
+          {/* Decorative Purple Blobs */}
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-100/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-100/20 rounded-full blur-[120px]" />
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-16">
+              <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} className="inline-block px-4 py-1.5 rounded-full border border-primary-100 bg-white mb-4 shadow-sm">
+                <span className="text-primary-600 text-sm font-semibold uppercase tracking-wider">Features</span>
+              </motion.div>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">Why Choose Collabo?</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">The modern platform engineered for creator growth and brand scale.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { icon: Zap, title: 'Fast & Easy', content: 'Find and connect with influencers in minutes. Our streamlined process makes collaboration effortless.', color: 'accent' },
+                { icon: Target, title: 'Targeted Reach', content: 'Filter by category, followers, and engagement to find the perfect match for your brand.', color: 'primary' },
+                { icon: CheckCircle, title: 'Verified Profiles', content: 'All creators are verified with real-time follower counts and authentic engagement metrics.', color: 'green' }
+              ].map((feature, i) => (
+                <div key={i} className="bg-white/40 backdrop-blur-md rounded-[32px] p-8 border border-white/60 hover:border-primary-200 hover:shadow-[0_20px_50px_rgba(137,21,160,0.08)] transition-all duration-300 transform hover:-translate-y-2 group shadow-sm">
+                  <div className={`w-16 h-16 bg-${feature.color}-50 rounded-2xl mb-6 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner`}>
+                    <feature.icon className={`h-8 w-8 text-${feature.color}-500`} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed text-lg">{feature.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white/10 backdrop-blur-sm py-24 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">Community Love</h2>
+              <p className="text-xl text-gray-600"> Trusted by leading brands and creators worldwide </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { name: 'Sarah Johnson', title: 'Marketing Director, TechCorp', init: 'S', content: 'Collabo made it incredibly easy to find the perfect influencers for our campaign. The analytics and targeting tools are unmatched.' },
+                { name: 'Rahul Sharma', title: 'Creator • 500k+ Followers', init: 'R', content: 'As a creator, Collabo has connected me with amazing brands that align with my exact values. The entire collaboration process is seamless.' },
+                { name: 'Priya Patel', title: 'Founder, Aura Brands', init: 'P', content: "The ROI from our influencer campaigns has tripled since we started using Collabo. The platform's insights are absolutely game-changing." }
+              ].map((testi, i) => (
+                <div key={i} className="bg-white/50 backdrop-blur-md rounded-[32px] p-10 border border-white/60 shadow-sm relative group hover:shadow-xl transition-all duration-300">
+                  <div className="absolute top-0 right-10 transform -translate-y-1/2 text-6xl text-primary-100 font-serif group-hover:text-primary-200 transition-colors">"</div>
+                  <p className="text-gray-700 leading-relaxed text-lg mb-8 relative z-10">{testi.content}</p>
+                  <div className="flex items-center border-t border-gray-100 pt-6">
+                    <div className="w-14 h-14 bg-gradient-to-br from-primary-600 to-accent-500 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4 shrink-0 shadow-md transition-transform group-hover:scale-105">{testi.init}</div>
+                    <div>
+                      <h4 className="text-lg font-bold text-gray-900">{testi.name}</h4>
+                      <p className="text-sm text-gray-500 font-medium">{testi.title}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="h-10 w-10 text-gray-900" />
-            </div>
-            <p className="text-gray-900 text-lg font-medium mb-2">No influencers found</p>
-            <p className="text-gray-900">Try selecting a different category</p>
-          </div>
-        )}
-        {!showAllInfluencers && influencers.length > 12 && (
-          <div className="sm:hidden mt-12 text-center">
-            <button onClick={handleViewAll}
-              className="inline-flex items-center space-x-2 bg-primary-600 text-white px-8 py-3 rounded-2xl font-semibold hover:bg-primary-700 transition-colors">
-              <span>View All Influencers</span>
-              <ArrowRight className="h-5 w-5" />
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* About Us Section */}
-      <AboutUs />
-
-      <section className="bg-gradient-to-br from-warm-50 to-primary-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4 scroll-animate opacity-0">Why Choose Collabo?</h2>
-            <p className="text-xl text-gray-900 scroll-animate opacity-0" style={{ animationDelay: '0.1s' }}>The modern platform for influencer marketing</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 scroll-animate opacity-0" style={{ animationDelay: '0.2s' }}>
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-2xl mb-6">
-                <Zap className="h-8 w-8 text-primary-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Fast & Easy</h3>
-              <p className="text-gray-900 leading-relaxed">Find and connect with influencers in minutes. Our streamlined process makes collaboration effortless.</p>
-            </div>
-            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 scroll-animate opacity-0" style={{ animationDelay: '0.3s' }}>
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-2xl mb-6">
-                <Target className="h-8 w-8 text-primary-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Targeted Reach</h3>
-              <p className="text-gray-900 leading-relaxed">Filter by category, followers, and engagement to find the perfect match for your brand.</p>
-            </div>
-            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 scroll-animate opacity-0" style={{ animationDelay: '0.4s' }}>
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-2xl mb-6">
-                <CheckCircle className="h-8 w-8 text-primary-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Verified Profiles</h3>
-              <p className="text-gray-900 leading-relaxed">All influencers are verified with real-time follower counts and authentic engagement metrics.</p>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Our Services Section */}
-      <OurServices />
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4 scroll-animate opacity-0">What Our Users Say</h2>
-            <p className="text-xl text-gray-900 scroll-animate opacity-0" style={{ animationDelay: '0.1s' }}>
-              Trusted by brands and influencers worldwide
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Testimonial 1 - Brand */}
-            <div className="bg-gradient-to-br from-warm-50 to-primary-50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 scroll-animate opacity-0" style={{ animationDelay: '0.2s' }}>
-              <div className="flex items-center mb-6">
-                <div className="w-14 h-14 bg-gradient-to-br from-primary-600 to-accent-500 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
-                  S
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-gray-900">Sarah Johnson</h4>
-                  <p className="text-sm text-gray-700">Marketing Director, TechCorp</p>
-                </div>
+        <section className="bg-white/30 backdrop-blur-xl py-24 border-t border-white/40 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary-500/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="bg-white/30 backdrop-blur-md rounded-[48px] p-12 sm:p-20 text-center shadow-[0_20px_60px_rgba(137,21,160,0.1)] border border-white/80">
+              <h2 className="text-5xl sm:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight">Ready to innovate?</h2>
+              <p className="text-xl text-gray-600 mb-12 leading-relaxed max-w-2xl mx-auto">Join the next generation of brands and creators scaling their reach together.</p>
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button onClick={() => navigate('/register?type=influencer')}
+                  className="w-full sm:w-auto bg-primary-600 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-primary-700 transition-all duration-300 shadow-[0_4px_24px_rgba(137,21,160,0.3)] transform hover:-translate-y-1 inline-flex items-center justify-center space-x-2">
+                  <span>Join as Creator</span>
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+                <button onClick={() => navigate('/register?type=company')}
+                  className="w-full sm:w-auto bg-white/60 backdrop-blur-sm hover:bg-white text-gray-900 px-10 py-5 rounded-full font-bold text-lg border border-white/40 transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center justify-center space-x-2 shadow-sm">
+                  <span>Join as Brand</span>
+                </button>
               </div>
-              <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-primary-600 fill-current" />
-                ))}
-              </div>
-              <p className="text-gray-900 leading-relaxed italic">
-                "Collabo made it incredibly easy to find the perfect influencers for our campaign. The platform is intuitive and the results exceeded our expectations!"
-              </p>
-            </div>
-
-            {/* Testimonial 2 - Influencer */}
-            <div className="bg-gradient-to-br from-warm-50 to-primary-50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 scroll-animate opacity-0" style={{ animationDelay: '0.3s' }}>
-              <div className="flex items-center mb-6">
-                <div className="w-14 h-14 bg-gradient-to-br from-accent-500 to-primary-600 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
-                  R
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-gray-900">Rahul Sharma</h4>
-                  <p className="text-sm text-gray-700">Fashion Influencer, 500K+ Followers</p>
-                </div>
-              </div>
-              <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-primary-600 fill-current" />
-                ))}
-              </div>
-              <p className="text-gray-900 leading-relaxed italic">
-                "As an influencer, Collabo has connected me with amazing brands that align with my values. The collaboration process is seamless and professional."
-              </p>
-            </div>
-
-            {/* Testimonial 3 - Brand */}
-            <div className="bg-gradient-to-br from-warm-50 to-primary-50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 scroll-animate opacity-0" style={{ animationDelay: '0.4s' }}>
-              <div className="flex items-center mb-6">
-                <div className="w-14 h-14 bg-gradient-to-br from-primary-700 to-accent-600 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
-                  P
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-gray-900">Priya Patel</h4>
-                  <p className="text-sm text-gray-700">CEO, BeautyBrand India</p>
-                </div>
-              </div>
-              <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-primary-600 fill-current" />
-                ))}
-              </div>
-              <p className="text-gray-900 leading-relaxed italic">
-                "The ROI from our influencer campaigns has tripled since we started using Collabo. The platform's analytics and targeting features are game-changing!"
-              </p>
             </div>
           </div>
+        </section>
 
-          {/* Stats Row */}
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 scroll-animate opacity-0" style={{ animationDelay: '0.5s' }}>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 mb-2">10K+</div>
-              <div className="text-gray-900 font-medium">Active Influencers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 mb-2">5K+</div>
-              <div className="text-gray-900 font-medium">Brands Trust Us</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 mb-2">50K+</div>
-              <div className="text-gray-900 font-medium">Campaigns Launched</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 mb-2">98%</div>
-              <div className="text-gray-900 font-medium">Satisfaction Rate</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-primary-600 to-accent-500 rounded-3xl p-12 sm:p-16 text-center shadow-2xl scroll-animate opacity-0">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full mb-6">
-              <Heart className="h-10 w-10 text-white" />
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">Ready to Start Collaborating?</h2>
-            <p className="text-xl text-white/90 mb-10 leading-relaxed">Join thousands of brands and influencers creating amazing content together.</p>
-            <button onClick={() => navigate('/register')}
-              className="bg-white text-primary-600 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 inline-flex items-center space-x-2">
-              <span>Get Started Free</span>
-              <ArrowRight className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
+        <CatalogFlipSection />
+        <Footer />
+      </div>
     </div>
   );
 };

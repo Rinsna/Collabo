@@ -151,7 +151,7 @@ const UserAccountMenu = () => {
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-72 sm:w-80 glass-card rounded-2xl shadow-2xl border border-white/10 z-50 overflow-hidden animate-fadeIn">
+          <div className="absolute right-0 mt-2 w-72 sm:w-80 glass-card rounded-2xl shadow-2xl border border-white/10 z-[9999] overflow-hidden animate-fadeIn">
             {/* Header */}
             <div className="p-4 border-b border-white/10 bg-gradient-to-r from-dark-800/50 to-dark-700/50">
               <div className="flex items-center space-x-3">

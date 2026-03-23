@@ -279,24 +279,12 @@ const CampaignList = () => {
 
                   {/* Action Button */}
                   {user?.user_type === 'influencer' ? (
-                    <button
-                      onClick={() => handleApply(campaign)}
-                      disabled={applyToCampaignMutation.isLoading && selectedCampaign?.id === campaign.id}
-                      className="w-full py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 bg-primary-600 hover:bg-primary-500 text-white hover:shadow-lg hover:shadow-primary-600/25 disabled:opacity-50 flex items-center justify-center"
-                    >
-                      {applyToCampaignMutation.isLoading && selectedCampaign?.id === campaign.id ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Applying...
-                        </div>
-                      ) : (
-                        <div className="flex items-center">
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Apply Now
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </div>
-                      )}
-                    </button>
+                    <div className="w-full py-4 px-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                      <p className="text-sm font-semibold text-gray-700 mb-1">Invitation Only</p>
+                      <p className="text-[10px] text-gray-500 uppercase font-black leading-tight">
+                        Only brands can initiate collaborations. Complete your profile to get noticed!
+                      </p>
+                    </div>
                   ) : user?.user_type === 'company' ? (
                     <div className="text-center py-3 bg-gray-600/20 rounded-lg">
                       <div className="flex items-center justify-center mb-1">

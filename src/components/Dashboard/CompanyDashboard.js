@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import api from '../../services/api';
-import { DollarSign, Calendar, TrendingUp, Building2, Target, Search, UserCheck, Plus, ArrowUpRight, BarChart3 } from 'lucide-react';
+import { DollarSign, Calendar, TrendingUp, Building2, Target, Search, UserCheck, Plus, ArrowUpRight, BarChart3, Headphones } from 'lucide-react';
 import CompanyProfile from '../Profile/CompanyProfile';
 import CampaignManagement from '../Campaigns/CampaignManagement';
 import InfluencerSearch from '../Influencers/InfluencerSearch';
 import CollaborationManagement from '../Collaborations/CollaborationManagement';
 import CompanyAnalytics from '../Analytics/CompanyAnalytics';
 import CompanyHero from '../Company/CompanyHero';
+import CompanySupportTickets from '../Support/CompanySupportTickets';
 
 const CompanyDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -37,6 +38,7 @@ const CompanyDashboard = () => {
     { id: 'influencers', label: 'Find Influencers', icon: Search },
     { id: 'collaborations', label: 'Collaborations', icon: UserCheck },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'support', label: 'Support', icon: Headphones },
   ];
 
   const stats = [
@@ -336,6 +338,10 @@ const CompanyDashboard = () => {
           <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-16 py-6 sm:py-8">
             <CollaborationManagement />
           </div>
+        )}
+
+        {activeTab === 'support' && (
+          <CompanySupportTickets />
         )}
     </div>
   );
