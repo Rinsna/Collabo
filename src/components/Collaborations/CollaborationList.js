@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import api from '../../services/api';
+import toast from 'react-hot-toast';
 import { 
   Calendar, 
   DollarSign, 
@@ -15,10 +16,14 @@ import {
   FileText,
   TrendingUp,
   Eye,
-  MoreHorizontal
+  MoreHorizontal,
+  MessageCircle,
+  X,
+  Check
 } from 'lucide-react';
 
 const CollaborationList = () => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('active');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -31,7 +36,63 @@ const CollaborationList = () => {
     api.get('/collaborations/requests/').then(res => res.data)
   );
 
-  if (isLoading || requestsLoading) {
+  const { data: directRequests, isLoading: directRequestsLoading } = useQuery('direct-requests', () =>
+    api.get('/collaborations/direct-requests/').then(res => res.data)
+  );
+
+  const acceptDirectRequestMutation = useMutation(
+    ({ id, data }) => api.post(`/collaborations/direct-requests/${id}/accept/`, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('direct-requests');
+        queryClient.invalidateQueries('collaborations');
+        toast.success('🎉 Proposal accepted! Collaboration created.');
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.error || 'Failed to accept proposal');
+      }
+    }
+  );
+
+  const rejectDirectRequestMutation = useMutation(
+    ({ id, data }) => api.post(`/collaborations/direct-requests/${id}/reject/`, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('direct-requests');
+        toast.success('Proposal rejected');
+      },
+      onError: (error) => {
+        toast.error('Failed to reject proposal');
+      }
+    }
+  );
+
+  const handleAcceptDirectRequest = (request) => {
+    const startDate = prompt('📅 Enter start date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+    const endDate = prompt('📅 Enter end date (YYYY-MM-DD):');
+    
+    if (startDate && endDate) {
+      acceptDirectRequestMutation.mutate({
+        id: request.id,
+        data: {
+          start_date: startDate,
+          end_date: endDate
+        }
+      });
+    }
+  };
+
+  const handleRejectDirectRequest = (request) => {
+    const reason = prompt('💬 Please provide a reason for rejection (optional):');
+    if (window.confirm(`Are you sure you want to reject this proposal from ${request.company_name}?`)) {
+      rejectDirectRequestMutation.mutate({
+        id: request.id,
+        data: { rejection_reason: reason || '' }
+      });
+    }
+  };
+
+  if (isLoading || requestsLoading || directRequestsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
@@ -68,8 +129,9 @@ const CollaborationList = () => {
 
   const tabs = [
     { id: 'active', label: 'Active Collaborations', count: collaborations?.results?.length || 0 },
+    { id: 'direct', label: 'Direct Proposals', count: directRequests?.results?.filter(req => req.status === 'pending').length || 0 },
     { id: 'pending', label: 'Pending Applications', count: requests?.results?.filter(req => req.status === 'pending').length || 0 },
-    { id: 'history', label: 'History', count: requests?.results?.filter(req => req.status !== 'pending').length || 0 }
+    { id: 'history', label: 'History', count: (requests?.results?.filter(req => req.status !== 'pending').length || 0) + (directRequests?.results?.filter(req => req.status !== 'pending').length || 0) }
   ];
 
   const filteredRequests = requests?.results?.filter(request => {
@@ -110,7 +172,7 @@ const CollaborationList = () => {
                 >
                   <span className="hidden sm:inline">{tab.label}</span>
                   <span className="sm:hidden">
-                    {tab.id === 'active' ? 'Active' : tab.id === 'pending' ? 'Pending' : 'History'}
+                    {tab.id === 'active' ? 'Active' : tab.id === 'direct' ? 'Direct' : tab.id === 'pending' ? 'Pending' : 'History'}
                   </span>
                   {tab.count > 0 && (
                     <span className={`ml-1 sm:ml-2 py-0.5 px-1.5 sm:px-2 rounded-full text-xs ${
@@ -162,6 +224,82 @@ const CollaborationList = () => {
 
         {/* Content */}
         <div className="bg-white rounded-xl shadow-md border border-gray-200">
+          {activeTab === 'direct' && (
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900">Direct Proposals from Companies</h2>
+                <span className="text-sm text-gray-600">
+                  {directRequests?.results?.filter(req => req.status === 'pending').length} proposals
+                </span>
+              </div>
+              
+              {directRequests?.results?.filter(req => req.status === 'pending').length > 0 ? (
+                <div className="grid gap-4 sm:gap-6">
+                  {directRequests.results.filter(req => req.status === 'pending').map((request) => (
+                    <div key={request.id} className="bg-gray-50 rounded-xl p-4 sm:p-6 hover:shadow-md transition-shadow duration-300 border border-gray-200">
+                      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                              <Building2 className="w-5 h-5 text-indigo-600" />
+                            </div>
+                            <div>
+                              <h3 className="text-base font-semibold text-gray-900">{request.company_name}</h3>
+                              <p className="text-sm text-gray-600">Company</p>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700 mb-4">
+                            <div className="flex items-center gap-1 bg-white px-3 py-1 rounded-full border border-gray-200">
+                              <DollarSign className="w-4 h-4 text-primary-600" />
+                              <span className="font-semibold text-primary-600">₹{request.proposed_rate?.toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-gray-500">
+                              <Calendar className="w-4 h-4" />
+                              <span>Received: {new Date(request.created_at).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+
+                          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-4">
+                            <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                              <MessageCircle className="w-3 h-3" />
+                              <span>Proposal Message</span>
+                            </div>
+                            <p className="text-sm text-gray-800 leading-relaxed italic">"{request.message}"</p>
+                          </div>
+                        </div>
+
+                        <div className="flex sm:flex-row lg:flex-col gap-2">
+                          <button
+                            onClick={() => handleAcceptDirectRequest(request)}
+                            disabled={acceptDirectRequestMutation.isLoading}
+                            className="flex-1 lg:w-32 py-2.5 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-all flex items-center justify-center gap-2 shadow-sm"
+                          >
+                            <Check className="w-4 h-4" />
+                            <span>Accept</span>
+                          </button>
+                          <button
+                            onClick={() => handleRejectDirectRequest(request)}
+                            disabled={rejectDirectRequestMutation.isLoading}
+                            className="flex-1 lg:w-32 py-2.5 bg-white text-gray-700 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+                          >
+                            <X className="w-4 h-4" />
+                            <span>Reject</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <MessageCircle className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No direct proposals</h3>
+                  <p className="text-sm sm:text-base text-gray-600">Companies haven't sent you direct proposals yet</p>
+                </div>
+              )}
+            </div>
+          )}
           {activeTab === 'active' && (
             <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-6">
@@ -295,18 +433,18 @@ const CollaborationList = () => {
           {activeTab === 'history' && (
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-dashboard-section text-gray-900">Application History</h2>
+                <h2 className="text-dashboard-section text-gray-900">Collaboration History</h2>
                 <span className="text-sm text-gray-800">
-                  {filteredRequests.filter(req => req.status !== 'pending').length} applications
+                  {filteredRequests.filter(req => req.status !== 'pending').length + (directRequests?.results?.filter(req => req.status !== 'pending').length || 0)} total
                 </span>
               </div>
               
-              {filteredRequests.filter(req => req.status !== 'pending').length > 0 ? (
-                <div className="grid gap-4 sm:gap-6">
-                  {filteredRequests
-                    .filter(req => req.status !== 'pending')
-                    .map((request) => (
-                    <div key={request.id} className="glass-card-dark rounded-xl p-6 card-hover border border-white/10">
+              <div className="space-y-4">
+                {/* Regular Application History */}
+                {filteredRequests
+                  .filter(req => req.status !== 'pending')
+                  .map((request) => (
+                    <div key={`req-${request.id}`} className="glass-card-dark rounded-xl p-6 card-hover border border-white/10">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
@@ -317,6 +455,7 @@ const CollaborationList = () => {
                               {getStatusIcon(request.status)}
                               {request.status}
                             </span>
+                            <span className="text-[10px] bg-gray-100 px-2 py-0.5 rounded uppercase font-bold text-gray-500">Application</span>
                           </div>
                           
                           <div className="flex items-center gap-4 text-sm text-gray-800 mb-3">
@@ -328,10 +467,6 @@ const CollaborationList = () => {
                               <DollarSign className="w-4 h-4" />
                               <span>Proposed: <span className="font-data text-primary-400">₹{request.proposed_rate?.toLocaleString()}</span></span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              Applied: {new Date(request.created_at).toLocaleDateString()}
-                            </div>
                           </div>
                           
                           {request.message && request.message.includes('[REJECTION REASON]') && (
@@ -342,21 +477,60 @@ const CollaborationList = () => {
                             </div>
                           )}
                         </div>
-                        
-                        <button className="p-2 text-gray-800 hover:text-gray-900 rounded-lg hover:bg-white/5 transition-all duration-200">
-                          <Eye className="w-5 h-5" />
-                        </button>
                       </div>
                     </div>
                   ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <FileText className="w-12 h-12 text-gray-800 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No application history</h3>
-                  <p className="text-gray-800">Your completed and rejected applications will appear here</p>
-                </div>
-              )}
+
+                {/* Direct Proposal History */}
+                {directRequests?.results
+                  ?.filter(req => req.status !== 'pending')
+                  .map((request) => (
+                    <div key={`dr-${request.id}`} className="glass-card-dark rounded-xl p-6 card-hover border border-white/10">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-dashboard-card text-gray-900">
+                              Direct Proposal from {request.company_name}
+                            </h3>
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(request.status)}`}>
+                              {getStatusIcon(request.status)}
+                              {request.status}
+                            </span>
+                            <span className="text-[10px] bg-indigo-100 px-2 py-0.5 rounded uppercase font-bold text-indigo-500">Direct</span>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 text-sm text-gray-800 mb-3">
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="w-4 h-4" />
+                              <span>Rate: <span className="font-data text-primary-400">₹{request.proposed_rate?.toLocaleString()}</span></span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              <span>{new Date(request.created_at).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+
+                          {request.rejection_reason && (
+                            <div className="mt-3 p-3 bg-red-50 border-l-4 border-red-200 rounded-lg">
+                              <p className="text-sm text-gray-800">
+                                <strong>Your Rejection Reason:</strong> {request.rejection_reason}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                {filteredRequests.filter(req => req.status !== 'pending').length === 0 && 
+                 directRequests?.results?.filter(req => req.status !== 'pending').length === 0 && (
+                  <div className="text-center py-12">
+                    <FileText className="w-12 h-12 text-gray-800 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No history</h3>
+                    <p className="text-gray-800">Your completed and rejected requests will appear here</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

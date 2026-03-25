@@ -164,7 +164,7 @@ const CollaborationManagement = () => {
 
   const tabs = [
     { id: 'pending', label: 'Pending Requests', count: pendingRequests.length, icon: Clock, color: 'text-yellow-600' },
-    { id: 'direct', label: 'Direct Messages', count: pendingDirectRequests.length, icon: MessageCircle, color: 'text-purple-600' },
+    { id: 'direct', label: 'Sent Proposals', count: pendingDirectRequests.length, icon: MessageCircle, color: 'text-purple-600' },
     { id: 'active', label: 'Active Collaborations', count: activeCollaborations.length, icon: PlayCircle, color: 'text-green-600' },
     { id: 'history', label: 'Request History', count: allRequests.length, icon: FileText, color: 'text-blue-600' }
   ];
@@ -417,21 +417,21 @@ const CollaborationManagement = () => {
           {activeTab === 'direct' && (
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Direct Messages</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Sent Proposals to Influencers</h2>
                 <div className="flex items-center space-x-2 text-sm text-gray-900">
                   <MessageCircle className="w-4 h-4" />
-                  <span>{pendingDirectRequests.length} pending</span>
+                  <span>{directRequestsList.length} total sent</span>
                 </div>
               </div>
 
               {directRequestsLoading ? (
                 <div className="text-center py-8">
                   <div className="spinner w-8 h-8 mx-auto mb-4"></div>
-                  <p className="text-gray-900">Loading direct messages...</p>
+                  <p className="text-gray-900">Loading sent proposals...</p>
                 </div>
-              ) : pendingDirectRequests.length > 0 ? (
+              ) : directRequestsList.length > 0 ? (
                 <div className="space-y-4">
-                  {pendingDirectRequests.map((request) => (
+                  {directRequestsList.map((request) => (
                     <div key={request.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
@@ -477,38 +477,30 @@ const CollaborationManagement = () => {
                         </div>
                       )}
 
-                      {user?.user_type === 'company' && request.status === 'pending' && (
-                        <div className="flex space-x-3">
-                          <button
-                            onClick={() => {
-                              // Handle direct request acceptance
-                              toast('Direct request management coming soon!');
-                            }}
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                            <span>Accept</span>
-                          </button>
-                          <button
-                            onClick={() => {
-                              // Handle direct request rejection
-                              toast('Direct request management coming soon!');
-                            }}
-                            className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
-                          >
-                            <X className="w-4 h-4" />
-                            <span>Reject</span>
-                          </button>
+                      {request.rejection_reason && (
+                        <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-200 rounded-lg">
+                          <p className="text-sm text-gray-800 italic">
+                            <strong>Reason:</strong> {request.rejection_reason}
+                          </p>
                         </div>
                       )}
+
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>Campaign: {request.campaign_details?.title || 'General'}</span>
+                        {request.status === 'accepted' && (
+                           <span className="text-green-600 font-bold flex items-center gap-1">
+                             <CheckCircle className="w-3 h-3" /> Accepted
+                           </span>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-12">
                   <MessageCircle className="w-16 h-16 text-gray-900 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">No direct messages</h3>
-                  <p className="text-gray-900">Direct messages from companies will appear here</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">No sent proposals</h3>
+                  <p className="text-gray-900">Direct proposals sent to influencers will appear here</p>
                 </div>
               )}
             </div>

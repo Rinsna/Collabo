@@ -248,7 +248,11 @@ const InfluencerAnalytics = () => {
           />
           <KPICard
             title="Total Views"
-            value={`${(animatedValues.totalViews / 1000000).toFixed(1)}M`}
+            value={animatedValues.totalViews >= 1000000 
+              ? `${(animatedValues.totalViews / 1000000).toFixed(1)}M` 
+              : animatedValues.totalViews >= 1000 
+                ? `${(animatedValues.totalViews / 1000).toFixed(1)}K`
+                : animatedValues.totalViews.toLocaleString()}
             change={performanceMetrics.viewsChange}
             icon={Eye}
             gradient="from-lime-500 to-violet-600"
@@ -569,8 +573,15 @@ const GrowthChart = ({ data }) => {
           {/* Calculate points */}
           {(() => {
             const points = data.map((item, index) => {
-              const x = (index / (data.length - 1)) * 100;
-              const y = 100 - ((item.followers - minValue) / (maxValue - minValue)) * 100;
+              // Guard against division by zero if data has only one item
+              const x = data.length > 1 ? (index / (data.length - 1)) * 100 : 0;
+              
+              // Guard against division by zero if all values are the same
+              const range = maxValue - minValue;
+              const y = range !== 0 
+                ? 100 - ((item.followers - minValue) / range) * 100 
+                : 50; // Place in middle if no range
+                
               return { x, y, ...item };
             });
 

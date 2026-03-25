@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import { motion, useInView, useAnimation } from 'framer-motion';
+import { useQuery, useMutation } from 'react-query';
+import { motion, useInView, useAnimation, AnimatePresence } from 'framer-motion';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import toast from 'react-hot-toast';
 import LandingNavbar from './LandingNavbar';
 import Footer from '../Layout/Footer';
 import {
@@ -16,6 +17,7 @@ const InfluencerDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
 
   const { data: influencer, isLoading } = useQuery(
     ['influencer-detail', id],
@@ -185,10 +187,20 @@ const InfluencerDetailPage = () => {
                 })}
               </motion.div>
 
-              {/* CTA Button - Conditionally Rendered */}
+              {/* CTA Button */}
               {user?.user_type !== 'influencer' && (
                 <motion.button
-                  onClick={() => user?.user_type === 'company' ? navigate('/dashboard') : navigate('/register')}
+                  onClick={() => {
+                    if (!user) {
+                      navigate('/register');
+                      return;
+                    }
+                    if (user.user_type === 'company') {
+                      setIsProposalModalOpen(true);
+                    } else {
+                      navigate('/register');
+                    }
+                  }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
@@ -205,6 +217,14 @@ const InfluencerDetailPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Proposal Modal */}
+      <DirectProposalModal 
+        isOpen={isProposalModalOpen}
+        onClose={() => setIsProposalModalOpen(false)}
+        influencer={influencer}
+        user={user}
+      />
 
       {/* Profile Details Section */}
       <AnimatedSection>
@@ -384,7 +404,15 @@ const InfluencerDetailPage = () => {
             {user?.user_type !== 'influencer' && (
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.button
-                  onClick={() => user?.user_type === 'company' ? navigate('/dashboard') : navigate('/register')}
+                  onClick={() => {
+                    if (!user) {
+                      navigate('/register');
+                    } else if (user.user_type === 'company') {
+                      setIsProposalModalOpen(true);
+                    } else {
+                      navigate('/register');
+                    }
+                  }}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-2xl transition-all duration-500 shadow-lg">
@@ -544,3 +572,136 @@ const RateCard = ({ label, value }) => (
 );
 
 export default InfluencerDetailPage;
+
+// Direct Proposal Modal Component
+const DirectProposalModal = ({ isOpen, onClose, influencer, user }) => {
+  const [message, setMessage] = useState('');
+  const [proposedRate, setProposedRate] = useState(influencer.rate_per_post || '');
+
+  const sendProposalMutation = useMutation(
+    (proposalData) => api.post('/collaborations/direct-requests/', proposalData),
+    {
+      onSuccess: () => {
+        toast.success(`Proposal sent to @${influencer.username}!`);
+        onClose();
+        setMessage('');
+      },
+      onError: (error) => {
+        toast.error(error.response?.data?.error || 'Failed to send proposal');
+      }
+    }
+  );
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!message.trim()) {
+      toast.error('Please enter a message');
+      return;
+    }
+
+    sendProposalMutation.mutate({
+      influencer: influencer.id,
+      message: message,
+      proposed_rate: proposedRate,
+      campaign_details: {
+        title: `Direct Proposal for @${influencer.username}`,
+        category: influencer.category
+      }
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden"
+          >
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-bold text-gray-900">Send Proposal</h2>
+                <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-4 mb-8 p-4 bg-indigo-50 rounded-2xl">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-indigo-200">
+                  {influencer.profile_image ? (
+                    <img src={influencer.profile_image} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-indigo-600 font-bold">
+                      {influencer.username.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900">@{influencer.username}</p>
+                  <p className="text-sm text-indigo-600">{influencer.category} Creator</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Proposed Rate (₹)
+                  </label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="number"
+                      value={proposedRate}
+                      onChange={(e) => setProposedRate(e.target.value)}
+                      placeholder="Enter your proposed rate"
+                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Your Message
+                  </label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    rows={4}
+                    placeholder="Briefly describe your collaboration idea..."
+                    className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none resize-none"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={sendProposalMutation.isLoading}
+                    className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100 transition-all flex items-center justify-center gap-2"
+                  >
+                    {sendProposalMutation.isLoading ? (
+                      <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span>Send Proposal</span>
+                        <Sparkles className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
