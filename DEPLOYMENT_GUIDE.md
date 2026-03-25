@@ -13,16 +13,11 @@ This guide provides a step-by-step walkthrough for deploying the **Collabo Platf
 
 ## 🏗 Part 1: Deploy Backend to Render
 
-Render will host our Python (Django) backend. It also provides a Managed PostgreSQL database.
+Render will host our Python (Django) backend. For portability, we use a persistent SQLite database.
 
-### 1. Create a PostgreSQL Database
-1.  Go to your Render Dashboard → **New** → **PostgreSQL**.
-2.  **Name**: `collabo-db`
-3.  **Database**: `collabo`
-4.  **User**: `admin`
-5.  **Region**: Same as your web service (e.g., `Oregon`).
-6.  Click **Create Database**.
-7.  **IMPORTANT**: Copy the **Internal Database URL** for later.
+
+SQLite is self-contained. No external database provisioning is required for this setup.
+
 
 ### 2. Create a Web Service
 1.  Go to Render Dashboard → **New** → **Web Service**.
@@ -35,7 +30,7 @@ Render will host our Python (Django) backend. It also provides a Managed Postgre
     *   `PYTHON_VERSION`: `3.11.0`
     *   `SECRET_KEY`: (Something secure, or let Render generate it).
     *   `DEBUG`: `False`
-    *   `DATABASE_URL`: Paste your PostgreSQL **Internal Database URL**.
+
     *   `ALLOWED_HOSTS`: `collab-backend.onrender.com` (Use your actual Render URL).
     *   `CORS_ALLOWED_ORIGINS`: `https://your-frontend-url.vercel.app` (You'll update this after Vercel deployment).
     *   `REDIS_URL`: (Optional, but required for Celery tasks). Link a Render Redis instance.
@@ -89,7 +84,8 @@ For the frontend to talk to the backend, we need to handle Cross-Origin Resource
 -   `backend/render.yaml`: Configuration blueprint for Render.
 -   `backend/build.sh`: Script to install requirements and run migrations.
 -   `backend/requirements.txt`: Complete list of production dependencies.
--   `backend/influencer_platform/settings.py`: Production-ready settings with WhiteNoise and PostgreSQL support.
+-   `backend/influencer_platform/settings.py`: Production-ready settings with WhiteNoise and SQLite support.
+
 
 ### Frontend Files Already Prepared:
 -   `frontend/vercel.json`: Routing and build configuration for Vercel.
@@ -99,6 +95,7 @@ For the frontend to talk to the backend, we need to handle Cross-Origin Resource
 
 ## 🏗 Troubleshooting
 
--   **Migrations Failed?** Check the Render logs. Ensure your `DATABASE_URL` is correct.
+-   **Migrations Failed?** Check the Render logs. Ensure the `db.sqlite3` file is correctly handled by Render's persistent disk (if applicable).
+
 -   **Static Files Missing?** Ensure WhiteNoise is in Python's `MIDDLEWARE`. (It is).
 -   **Frontend API Errors?** Check the Browser Console for CORS errors. Ensure the `CORS_ALLOWED_ORIGINS` in Render matches your Vercel URL exactly (no trailing slash).

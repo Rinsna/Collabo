@@ -66,7 +66,7 @@ const PlatformSettings = () => {
 
   const systemStatus = [
     { name: 'Core API Gateway', status: 'online', latency: '42ms', load: '14%' },
-    { name: 'Main Database Cluster', status: 'online', latency: '8ms', load: '32%' },
+    { name: 'SQLite Core Storage', status: 'online', latency: '2ms', load: '12%' },
     { name: 'Redis Cache Node', status: 'online', latency: '2ms', load: '8%' },
     { name: 'Stripe Webhooks', status: 'operational', latency: 'N/A', load: 'N/A' },
   ];
@@ -250,12 +250,14 @@ const PlatformSettings = () => {
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Database Architecture</h3>
-                  <p className="text-gray-500 max-w-sm mx-auto mt-2 font-medium">Currently linked to PostgreSQL Cluster [Prod-Region-1]. All systems are balanced and optimized.</p>
+                  <p className="text-gray-500 max-w-sm mx-auto mt-2 font-medium">Currently utilizing an optimized SQLite engine. All systems are balanced and responsive.</p>
+
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                    <div className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-600">
                       <p className="text-[8px] text-gray-400 font-black uppercase mb-1">Engine</p>
-                      <p className="text-xs font-black text-gray-900 dark:text-white">PostgreSQL 15</p>
+                       <p className="text-xs font-black text-gray-900 dark:text-white">SQLite 3.x</p>
+
                    </div>
                    <div className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-600">
                       <p className="text-[8px] text-gray-400 font-black uppercase mb-1">Cache</p>
