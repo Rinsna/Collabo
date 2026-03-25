@@ -10,7 +10,7 @@ import Footer from '../Layout/Footer';
 import {
   Users, TrendingUp, MapPin, Instagram, Youtube, Play, Eye, Heart,
   MessageCircle, Award, Briefcase, Globe, DollarSign, Calendar,
-  CheckCircle, Target, Sparkles, BarChart3, Clock, ArrowUpRight
+  CheckCircle, Target, Sparkles, BarChart3, Clock, ArrowUpRight, X
 } from 'lucide-react';
 
 const InfluencerDetailPage = () => {
