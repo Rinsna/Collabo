@@ -147,7 +147,7 @@ const LandingPage = () => {
     { retry: false, refetchOnWindowFocus: false }
   );
 
-  const influencers = influencersData?.results || [];
+  const influencers = influencersData?.results || (Array.isArray(influencersData) ? influencersData : []);
   
   // Filter influencers by search query
   const filteredInfluencers = searchQuery && searchQuery.trim() !== ''
