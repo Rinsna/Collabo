@@ -22,9 +22,8 @@ const InfluencerDetailPage = () => {
   const { data: influencer, isLoading } = useQuery(
     ['influencer-detail', id],
     async () => {
-      const response = await api.get(`/auth/influencers/`);
-      const influencers = response.data.results || [];
-      return influencers.find(inf => inf.id === parseInt(id));
+      const response = await api.get(`/auth/influencers/${id}/`);
+      return response.data;
     },
     { retry: false, refetchOnWindowFocus: false }
   );

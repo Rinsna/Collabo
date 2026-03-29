@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import {
@@ -17,19 +17,26 @@ import {
 } from 'lucide-react';
 
 const Register = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Parse type from query params
+  const queryParams = new URLSearchParams(location.search);
+  const initialType = queryParams.get('type') === 'company' ? 'company' : 'influencer';
+
   const [formData, setFormData] = useState({
     email: '',
     username: '',
     password: '',
     password_confirm: '',
-    user_type: 'influencer'
+    user_type: initialType
   });
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({

@@ -55,7 +55,8 @@ const InfluencerSearch = () => {
       
       const url = `/auth/influencers/?${params}`;
       const response = await api.get(url);
-      return response.data;
+      const data = response.data;
+      return data.results && Array.isArray(data.results) ? data : { results: data, count: data.length };
     },
     { keepPreviousData: true }
   );

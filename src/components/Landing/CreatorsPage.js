@@ -43,21 +43,32 @@ const CreatorsPage = () => {
     }
   }, [location.state]);
 
-  const { data: influencersData, isLoading } = useQuery(
+  const { data: influencersData, isLoading, error } = useQuery(
     ['creators-influencers', selectedCategory],
     async () => {
-      const response = await api.get('/auth/influencers/', {
-        params: {
-          ordering: '-followers_count',
-          category: selectedCategory !== 'all' ? selectedCategory : undefined
-        }
-      });
-      return response.data;
+      console.log('CreatorsPage - Fetching influencers for category:', selectedCategory);
+      try {
+        const response = await api.get('/auth/influencers/', {
+          params: {
+            ordering: '-followers_count',
+            category: selectedCategory !== 'all' ? selectedCategory : undefined
+          }
+        });
+        console.log('CreatorsPage - Response received:', response.data);
+        return response.data;
+      } catch (err) {
+        console.error('CreatorsPage - API Error:', err);
+        throw err;
+      }
     },
     { retry: false, refetchOnWindowFocus: false }
   );
 
-  const influencers = influencersData?.results || [];
+  if (error) {
+    console.error('CreatorsPage - Query error:', error);
+  }
+
+  const influencers = influencersData?.results || (Array.isArray(influencersData) ? influencersData : []);
   
   const displayedInfluencers = searchQuery && searchQuery.trim() !== ''
     ? influencers.filter(inf => 

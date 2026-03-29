@@ -11,12 +11,13 @@ import {
   ExternalLink,
   Heart
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const platformLinks = [
-    { name: 'Find Creators', href: '/search' },
+    { name: 'Find Creators', href: '/creators' },
     { name: 'Browse Campaigns', href: '/campaigns' },
     { name: 'Create Campaign', href: '/campaigns/create' },
     { name: 'My Collaborations', href: '/collaborations' },
@@ -105,13 +106,13 @@ const Footer = () => {
             <ul className="space-y-4">
               {platformLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     className="text-sm text-gray-500 hover:text-accent-600 transition-colors duration-200 flex items-center group"
                   >
                     <span>{link.name}</span>
                     <ExternalLink className="w-3 h-3 ml-2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 text-accent-500" />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -123,13 +124,13 @@ const Footer = () => {
             <ul className="space-y-4">
               {aboutLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     className="text-sm text-gray-500 hover:text-accent-600 transition-colors duration-200 flex items-center group"
                   >
                     <span>{link.name}</span>
                     <ExternalLink className="w-3 h-3 ml-2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 text-accent-500" />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -141,13 +142,13 @@ const Footer = () => {
             <ul className="space-y-4">
               {supportLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     className="text-sm text-gray-500 hover:text-accent-600 transition-colors duration-200 flex items-center group"
                   >
                     <span>{link.name}</span>
                     <ExternalLink className="w-3 h-3 ml-2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 text-accent-500" />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -183,12 +184,12 @@ const Footer = () => {
           <div className="flex flex-wrap items-center gap-6">
             {legalLinks.map((link, index) => (
               <React.Fragment key={link.name}>
-                <a
-                  href={link.href}
+                <Link
+                  to={link.href}
                   className="text-xs text-gray-400 hover:text-gray-900 transition-colors duration-200 uppercase tracking-widest font-semibold"
                 >
                   {link.name}
-                </a>
+                </Link>
               </React.Fragment>
             ))}
           </div>
