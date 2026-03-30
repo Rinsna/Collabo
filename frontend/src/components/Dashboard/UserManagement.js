@@ -4,7 +4,8 @@ import {
   Users, Search, Filter, Mail, Phone, Calendar, 
   Shield, UserCheck, UserX, Trash2, Eye, MoreVertical,
   ArrowRight, Building2, User, Instagram, Youtube, MapPin, 
-  Languages, IndianRupee, PieChart, ExternalLink, Briefcase
+  Languages, IndianRupee, PieChart, ExternalLink, Briefcase,
+  KeyRound, EyeOff, X, CheckCircle2
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
@@ -16,6 +17,13 @@ const UserManagement = () => {
   const [userTypeFilter, setUserTypeFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [resetPasswordTarget, setResetPasswordTarget] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -45,12 +53,47 @@ const UserManagement = () => {
   const handleDeleteUser = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       try {
-        await api.delete(`/auth/admin/delete-influencer/${userId}/`); // Reusing delete endpoint or add new generic one
+        await api.delete(`/auth/admin/delete-influencer/${userId}/`);
         toast.success('User deleted successfully');
         fetchUsers();
       } catch (error) {
         toast.error('Failed to delete user');
       }
+    }
+  };
+
+  const openResetPasswordModal = (user, e) => {
+    e.stopPropagation();
+    setResetPasswordTarget(user);
+    setNewPassword('');
+    setConfirmPassword('');
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setIsResetPasswordModalOpen(true);
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match.');
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const response = await api.post(`/auth/admin/reset-password/${resetPasswordTarget.id}/`, {
+        new_password: newPassword
+      });
+      toast.success(response.data.message || 'Password reset successfully!');
+      setIsResetPasswordModalOpen(false);
+      setResetPasswordTarget(null);
+    } catch (error) {
+      const msg = error.response?.data?.error || 'Failed to reset password.';
+      toast.error(msg);
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -378,8 +421,11 @@ const UserManagement = () => {
                     <div className="bg-gray-50 dark:bg-gray-700/50 rounded-[2rem] p-6 border border-gray-100 dark:border-gray-600 border-dashed">
                       <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Administrative Controls</h4>
                       <div className="space-y-3">
-                        <button className="w-full py-3 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-2xl text-xs font-black text-gray-700 dark:text-gray-200 hover:border-violet-500 hover:text-violet-500 transition-all flex items-center justify-between group">
-                          <span>RESET USER PASSWORD</span>
+                        <button 
+                          onClick={(e) => openResetPasswordModal(selectedUser, e)}
+                          className="w-full py-3 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-2xl text-xs font-black text-gray-700 dark:text-gray-200 hover:border-violet-500 hover:text-violet-500 transition-all flex items-center justify-between group"
+                        >
+                          <span className="flex items-center gap-2"><KeyRound className="w-3.5 h-3.5" /> RESET USER PASSWORD</span>
                           <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
                         </button>
                         <button className="w-full py-3 px-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-2xl text-xs font-black text-gray-700 dark:text-gray-200 hover:border-amber-500 hover:text-amber-500 transition-all flex items-center justify-between group">
@@ -396,6 +442,111 @@ const UserManagement = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Reset Password Modal */}
+      <AnimatePresence>
+        {isResetPasswordModalOpen && resetPasswordTarget && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden"
+            >
+              {/* Header */}
+              <div className="p-6 bg-gradient-to-r from-violet-600 to-purple-600 text-white">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <KeyRound className="w-5 h-5" />
+                      <h3 className="text-lg font-bold">Reset Password</h3>
+                    </div>
+                    <p className="text-white/70 text-sm">For: <span className="font-bold text-white">{resetPasswordTarget.username}</span> ({resetPasswordTarget.email})</p>
+                  </div>
+                  <button
+                    onClick={() => setIsResetPasswordModalOpen(false)}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 space-y-4">
+                {/* New Password */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">New Password</label>
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? 'text' : 'password'}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Minimum 6 characters"
+                      className="w-full px-4 py-3 pr-12 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Confirm Password</label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Re-enter password"
+                      className="w-full px-4 py-3 pr-12 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {confirmPassword && newPassword !== confirmPassword && (
+                    <p className="mt-1.5 text-xs text-red-500 font-medium">Passwords do not match</p>
+                  )}
+                  {confirmPassword && newPassword === confirmPassword && newPassword.length >= 6 && (
+                    <p className="mt-1.5 text-xs text-green-500 font-medium flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Passwords match</p>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => setIsResetPasswordModalOpen(false)}
+                    className="flex-1 py-3 px-4 border border-gray-200 dark:border-gray-600 text-sm font-bold text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleResetPassword}
+                    disabled={resetLoading || !newPassword || !confirmPassword}
+                    className="flex-1 py-3 px-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold rounded-xl hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    {resetLoading ? (
+                      <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> Resetting...</>
+                    ) : (
+                      <><KeyRound className="w-4 h-4" /> Reset Password</>
+                    )}
+                  </button>
                 </div>
               </div>
             </motion.div>
