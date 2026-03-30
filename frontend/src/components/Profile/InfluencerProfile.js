@@ -159,7 +159,10 @@ const InfluencerProfile = () => {
         return { previousProfile };
       },
       onSuccess: (response) => {
+        // Set the query data immediately with the server response
         queryClient.setQueryData('influencer-profile', response.data);
+        // Invalidate & refetch so the hero section on the overview tab updates too
+        queryClient.invalidateQueries('influencer-profile');
         toast.dismiss(); // Dismiss "Saving..." message
         toast.success('Profile updated!');
         // Clear file states
