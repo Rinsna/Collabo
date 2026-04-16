@@ -30,43 +30,42 @@ const ModernHero = () => {
   return (
     <section className="relative bg-transparent overflow-hidden pt-28 pb-0 flex flex-col items-center">
       
-      {/* Vibrant Branded Glassmorphic Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      {/* Premium Glassmorphic Ambient Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 bg-[#FDFCFE]">
+        {/* Primary Ambient Glow */}
         <motion.div 
-          initial={{ opacity: 0 }}
           animate={{ 
-            opacity: [0.1, 0.2, 0.1],
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.4, 0.3],
           }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-[10%] -left-[10%] w-[85%] h-[85%] bg-[#8915A0]/15 rounded-full blur-[100px] z-0" 
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-20%] left-[-10%] w-[100%] h-[100%] bg-gradient-to-br from-[#8915A0]/20 via-[#DB2777]/10 to-transparent rounded-full blur-[120px]" 
         />
         
+        {/* Accent Glow */}
         <motion.div 
-          initial={{ opacity: 0 }}
           animate={{ 
-            opacity: [0.08, 0.15, 0.08],
-            scale: [1, 1.3, 1],
-            x: [0, -50, 0],
+            scale: [1, 1.2, 1],
+            x: [0, 30, 0],
           }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[10%] -right-[15%] w-[80%] h-[80%] bg-[#EC4899]/12 rounded-full blur-[120px] z-0" 
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-[-10%] right-[-5%] w-[70%] h-[70%] bg-[#8915A0]/10 rounded-full blur-[100px]" 
         />
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: [0.05, 0.12, 0.05],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-10%] left-[10%] w-[60%] h-[60%] bg-[#8915A0]/10 rounded-full blur-[90px] z-0" 
+        {/* Subtle Glassmorphic Overlay for Depth */}
+        <div className="absolute inset-0 bg-white/30 backdrop-blur-[2px]" />
+        
+        {/* Mesh Gradient Effect Layer */}
+        <div className="absolute inset-0 opacity-[0.4]" 
+             style={{ 
+               background: `radial-gradient(circle at 20% 30%, #8915A008 0%, transparent 50%), 
+                            radial-gradient(circle at 80% 70%, #DB277708 0%, transparent 50%)` 
+             }} 
         />
 
-        {/* Global Faint Grain Effect - Embedded SVG to fix 403 error */}
+        {/* Global Premium Grain Effect */}
         <div 
-          className="absolute inset-0 opacity-[0.03] mix-blend-overlay z-10 pointer-events-none" 
+          className="absolute inset-0 opacity-[0.02] mix-blend-multiply z-10 pointer-events-none" 
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
         />
       </div>
