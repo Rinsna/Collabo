@@ -141,7 +141,7 @@ const ModernHero = () => {
       </div>
 
       {/* Clustered "Grouped Badge" Style Marquee - Metapic Perfection */}
-      <div className="w-full -mt-12 relative h-[360px] overflow-hidden flex flex-col justify-end pb-4">
+      <div className="w-full -mt-12 relative h-[300px] overflow-hidden flex flex-col justify-end pb-4">
         <div className="flex overflow-hidden mb-0">
           <div 
             className="flex gap-10 items-end animate-marquee shadow-none"
@@ -150,9 +150,9 @@ const ModernHero = () => {
             {marqueeCards.map((card, index) => {
               const baseIndex = index % (cards.length || 1);
               
-              // Standardized width for glitch-free marquee looping
-              const cardWidth = "w-[160px] sm:w-[180px]";
-              const cardHeight = "h-[160px] sm:h-[180px]";
+              // Ultra-minimal card sizes
+              const cardWidth = "w-[100px] sm:w-[120px]";
+              const cardHeight = "h-[100px] sm:h-[120px]";
               
               const offsets = ["mb-4", "mb-12", "mb-0", "mb-16", "mb-6", "mb-20", "mb-2"];
               const offset = offsets[baseIndex % offsets.length];
