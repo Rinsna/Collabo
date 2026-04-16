@@ -186,7 +186,7 @@ const ModernHero = () => {
       </div>
 
       {/* Clustered "Grouped Badge" Style Marquee - Metapic Perfection */}
-      <div className="w-full -mt-24 relative h-[360px] overflow-hidden flex flex-col justify-end pb-4">
+      <div className="w-full -mt-12 relative h-[360px] overflow-hidden flex flex-col justify-end pb-4">
         <div className="flex overflow-hidden mb-0">
           <div 
             className="flex gap-10 items-end animate-marquee shadow-none"
