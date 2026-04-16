@@ -114,15 +114,17 @@ const CatalogFlipSection = () => {
                  initial={{ opacity: 0, x: 400, scale: 0.8 }}
                  animate={{ 
                    // Horizontal: Immediate right-to-center and center-to-left
-                   x: (offset * 105) + (mousePos.x * (1 - absOffset * 0.1)), 
-                   y: (hoverActive ? -20 : (absOffset * 10)) + (mousePos.y * (1 - absOffset * 0.1)), 
-                   scale: (isCenter ? 1.0 : 1.0 - (absOffset * 0.04)),
+                   x: (offset * 110) + (mousePos.x * (1 - absOffset * 0.1)), 
+                   // PULSE: Lift center item up (-40) and push others down
+                   y: (hoverActive ? -60 : (isCenter ? -40 : 20 + absOffset * 15)) + (mousePos.y * (1 - absOffset * 0.1)), 
+                   // POP: Increase center scale to 1.15, scale others down to 0.95 and below
+                   scale: (isCenter ? 1.15 : 0.95 - (absOffset * 0.05)),
                    // Solid Style: NO TRANSPARENCY
                    rotateY: 0, 
                    rotateX: (mousePos.y * -0.5),
                    rotateZ: 0, 
                    opacity: 1, 
-                   z: isCenter ? 0 : -absOffset * 120,
+                   z: isCenter ? 300 : -absOffset * 120,
                  }}
                  whileTap={{ scale: 1.1, cursor: 'grabbing' }}
                  onHoverStart={() => setIsHovered(i)}
