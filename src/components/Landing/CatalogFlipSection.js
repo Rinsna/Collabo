@@ -51,24 +51,14 @@ const CatalogFlipSection = () => {
   return (
     <div 
       onMouseMove={handleMouseMove}
-      className="relative w-full bg-white py-16 overflow-hidden flex flex-col items-center justify-center min-h-[500px] sm:min-h-[650px]"
+      className="relative w-full bg-transparent py-16 overflow-hidden flex flex-col items-center justify-center min-h-[500px] sm:min-h-[650px]"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
-      {/* Premium White & Purple Background */}
+      {/* Premium Ambient Background - Subtler overlay to let global background through */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ x: [0, 50, 0], y: [0, -50, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-primary-200/20 rounded-full blur-[140px]" 
-        />
-        <motion.div 
-          animate={{ x: [0, -60, 0], y: [0, 60, 0] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-accent-100/30 rounded-full blur-[140px]" 
-        />
-        <div className="absolute inset-0 backdrop-blur-[100px] bg-white/60 z-10" />
+        {/* Subtle Noise Texture */}
         <div 
-          className="absolute inset-0 opacity-[0.03] contrast-150 mix-blend-overlay z-20 pointer-events-none" 
+          className="absolute inset-0 opacity-[0.02] contrast-150 mix-blend-overlay z-20 pointer-events-none" 
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
         />
       </div>

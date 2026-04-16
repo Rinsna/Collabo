@@ -209,7 +209,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white/95 relative overflow-hidden selection:bg-primary-100 selection:text-primary-900">
+    <div className="min-h-screen bg-transparent relative overflow-hidden selection:bg-primary-100 selection:text-primary-900">
       <LandingNavbar onSearch={handleSearch} />
 
       {/* Performance Optimized Background - Global Ambient Glow System */}
@@ -339,7 +339,7 @@ const LandingPage = () => {
 
         <AnimatedTextSection />
 
-        <section className="bg-transparent py-24 relative overflow-hidden mt-12">
+        <section id="features" className="bg-transparent py-24 relative overflow-hidden mt-12">
           {/* Decorative Purple Blobs */}
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-100/20 rounded-full blur-[120px]" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-100/20 rounded-full blur-[120px]" />
@@ -371,7 +371,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <section className="bg-white/10 backdrop-blur-sm py-24 relative overflow-hidden">
+        <section id="testimonials" className="bg-transparent py-24 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-20">
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">Community Love</h2>
@@ -399,7 +399,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <section className="bg-white/30 backdrop-blur-xl py-24 border-t border-white/40 relative overflow-hidden">
+        <section id="cta" className="bg-transparent py-24 border-t border-white/40 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary-500/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="bg-white/30 backdrop-blur-md rounded-[48px] p-12 sm:p-20 text-center shadow-[0_20px_60px_rgba(137,21,160,0.1)] border border-white/80">
