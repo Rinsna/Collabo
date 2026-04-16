@@ -147,15 +147,15 @@ const CatalogFlipSection = () => {
                      delay: i * 0.05 
                    }}
                  >
-                    {/* Glassmorphic Card Container - NO BORDERS */}
-                    <div className={`relative w-full h-full rounded-[2.5rem] overflow-hidden transition-all duration-700 
+                    {/* Glassmorphic Card Container - ORGANIC ROUNDED SHAPE */}
+                    <div className={`relative w-full h-full rounded-[3rem] sm:rounded-[3.5rem] overflow-hidden transition-all duration-700 
                       ${isCenter 
                         ? 'shadow-[0_80px_150px_-40px_rgba(137,21,160,0.25)] bg-white/90 backdrop-blur-xl' 
                         : 'shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] bg-white/40 backdrop-blur-md'
                       } 
                       ${hoverActive ? 'shadow-primary-300' : ''}`}
                     >
-                      <div className="w-full h-full rounded-[2.2rem] overflow-hidden m-0">
+                      <div className="w-full h-full rounded-[3rem] sm:rounded-[3.5rem] overflow-hidden m-0">
                        <img 
                          src={card?.image_url || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop'} 
                          alt=""
