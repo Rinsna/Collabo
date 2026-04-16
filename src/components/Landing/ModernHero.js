@@ -35,20 +35,20 @@ const ModernHero = () => {
         {/* Primary Ambient Glow */}
         <motion.div 
           animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.4, 0.3],
+            scale: [1, 1.05, 1],
+            opacity: [0.3, 0.35, 0.3],
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-[-20%] left-[-10%] w-[100%] h-[100%] bg-gradient-to-br from-[#8915A0]/20 via-[#DB2777]/10 to-transparent rounded-full blur-[120px]" 
         />
         
         {/* Accent Glow */}
         <motion.div 
           animate={{ 
-            scale: [1, 1.2, 1],
-            x: [0, 30, 0],
+            scale: [1, 1.1, 1],
+            x: [0, 20, 0],
           }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-[-10%] right-[-5%] w-[70%] h-[70%] bg-[#8915A0]/10 rounded-full blur-[100px]" 
         />
 
@@ -76,7 +76,7 @@ const ModernHero = () => {
         <motion.h1 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.9] mb-4 text-black max-w-4xl"
         >
           {hero.title.split('\n').map((line, i) => {
@@ -140,7 +140,7 @@ const ModernHero = () => {
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
+          transition={{ delay: 0.3, duration: 1 }}
           className="max-w-xl mx-auto text-sm sm:text-base text-gray-400 mb-6 sm:mb-8 leading-relaxed font-medium"
         >
           {hero.subtitle}
@@ -150,7 +150,7 @@ const ModernHero = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full sm:w-auto"
         >
           <button 
@@ -241,7 +241,7 @@ const ModernHero = () => {
           100% { transform: translate3d(-33.333333%, 0, 0); }
         }
         .animate-marquee {
-          animation: marquee 40s linear infinite;
+          animation: marquee 60s linear infinite;
           display: flex;
           width: fit-content;
         }
@@ -250,7 +250,7 @@ const ModernHero = () => {
           50% { background-position: 100% 50%; }
         }
         .animate-gradient-x {
-          animation: gradient-x 10s ease infinite;
+          animation: gradient-x 15s ease infinite;
         }
       `}} />
     </section>
