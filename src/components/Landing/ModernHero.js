@@ -32,28 +32,39 @@ const ModernHero = () => {
       
       {/* Premium Glassmorphic Ambient Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 bg-[#FDFCFE]">
-        {/* Primary Ambient Glow */}
+        {/* Primary Ambient Glow - Deeper Purple Spread */}
         <motion.div 
           animate={{ 
-            scale: [1, 1.05, 1],
-            opacity: [0.3, 0.35, 0.3],
+            scale: [1, 1.15, 1],
+            opacity: [0.35, 0.45, 0.35],
           }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-20%] left-[-10%] w-[100%] h-[100%] bg-gradient-to-br from-[#8915A0]/20 via-[#DB2777]/10 to-transparent rounded-full blur-[120px]" 
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-25%] left-[-15%] w-[110%] h-[110%] bg-gradient-to-br from-[#8915A0]/30 via-[#DB2777]/15 to-transparent rounded-full blur-[140px]" 
         />
         
+        {/* Central Ambient Glow for Depth */}
+        <motion.div 
+          animate={{ 
+            scale: [1.1, 1.3, 1.1],
+            opacity: [0.1, 0.2, 0.1],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-1/4 left-1/4 w-[60%] h-[60%] bg-[#8915A0]/15 rounded-full blur-[160px]" 
+        />
+
         {/* Accent Glow */}
         <motion.div 
           animate={{ 
-            scale: [1, 1.1, 1],
-            x: [0, 20, 0],
+            scale: [1, 1.2, 1],
+            x: [0, 40, 0],
+            y: [0, -30, 0],
           }}
           transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-10%] right-[-5%] w-[70%] h-[70%] bg-[#8915A0]/10 rounded-full blur-[100px]" 
+          className="absolute bottom-[-15%] right-[-10%] w-[80%] h-[80%] bg-[#8915A0]/15 rounded-full blur-[120px]" 
         />
 
-        {/* Subtle Glassmorphic Overlay for Depth */}
-        <div className="absolute inset-0 bg-white/30 backdrop-blur-[2px]" />
+        {/* Enhanced Glassmorphic Spread Overlay */}
+        <div className="absolute inset-0 bg-white/20 backdrop-blur-[60px]" />
         
         {/* Mesh Gradient Effect Layer */}
         <div className="absolute inset-0 opacity-[0.4]" 
