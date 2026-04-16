@@ -212,8 +212,50 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white/95 relative overflow-hidden selection:bg-primary-100 selection:text-primary-900">
       <LandingNavbar onSearch={handleSearch} />
 
-      {/* Performance Optimized Background - ModernHero handles hero blurs */}
-      <div className="fixed inset-0 pointer-events-none z-0 bg-[#FDFCFE]" />
+      {/* Performance Optimized Background - Global Ambient Glow System */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[#FDFCFE] overflow-hidden">
+        {/* Primary Ambient Glow - Global Spread */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.15, 1],
+            opacity: [0.35, 0.45, 0.35],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-25%] left-[-15%] w-[110%] h-[110%] bg-gradient-to-br from-[#8915A0]/30 via-[#DB2777]/15 to-transparent rounded-full blur-[140px]" 
+        />
+        
+        {/* Central Ambient Glow for Global Depth */}
+        <motion.div 
+          animate={{ 
+            scale: [1.1, 1.3, 1.1],
+            opacity: [0.1, 0.2, 0.1],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-1/4 left-1/4 w-[60%] h-[60%] bg-[#8915A0]/15 rounded-full blur-[160px]" 
+        />
+
+        {/* Accent Glow */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            x: [0, 40, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-[-15%] right-[-10%] w-[80%] h-[80%] bg-[#8915A0]/15 rounded-full blur-[120px]" 
+        />
+
+        {/* Global Glassmorphic Spread Overlay */}
+        <div className="absolute inset-0 bg-white/20 backdrop-blur-[60px]" />
+        
+        {/* Subtle Mesh Texture */}
+        <div className="absolute inset-0 opacity-[0.2]" 
+             style={{ 
+               backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(137, 21, 160, 0.05) 1px, transparent 0)',
+               backgroundSize: '40px 40px' 
+             }} 
+        />
+      </div>
 
       <div className="relative z-10 font-sans">
         <ModernHero />

@@ -30,51 +30,6 @@ const ModernHero = () => {
   return (
     <section className="relative bg-transparent overflow-hidden pt-20 pb-0 flex flex-col items-center">
       
-      {/* Premium Glassmorphic Ambient Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 bg-[#FDFCFE]">
-        {/* Primary Ambient Glow - Deeper Purple Spread */}
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.15, 1],
-            opacity: [0.35, 0.45, 0.35],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-25%] left-[-15%] w-[110%] h-[110%] bg-gradient-to-br from-[#8915A0]/30 via-[#DB2777]/15 to-transparent rounded-full blur-[140px]" 
-        />
-        
-        {/* Central Ambient Glow for Depth */}
-        <motion.div 
-          animate={{ 
-            scale: [1.1, 1.3, 1.1],
-            opacity: [0.1, 0.2, 0.1],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-1/4 left-1/4 w-[60%] h-[60%] bg-[#8915A0]/15 rounded-full blur-[160px]" 
-        />
-
-        {/* Accent Glow */}
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            x: [0, 40, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-15%] right-[-10%] w-[80%] h-[80%] bg-[#8915A0]/15 rounded-full blur-[120px]" 
-        />
-
-        {/* Enhanced Glassmorphic Spread Overlay */}
-        <div className="absolute inset-0 bg-white/20 backdrop-blur-[60px]" />
-        
-        {/* Mesh Gradient Effect Layer */}
-        <div className="absolute inset-0 opacity-[0.4]" 
-             style={{ 
-               background: `radial-gradient(circle at 20% 30%, #8915A008 0%, transparent 50%), 
-                            radial-gradient(circle at 80% 70%, #DB277708 0%, transparent 50%)` 
-             }} 
-        />
-
-        {/* Global Premium Grain Effect */}
         <div 
           className="absolute inset-0 opacity-[0.02] mix-blend-multiply z-10 pointer-events-none" 
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
