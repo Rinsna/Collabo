@@ -8,6 +8,7 @@ import LandingNavbar from './LandingNavbar';
 import ModernHero from './ModernHero';
 import AnimatedTextSection from './AnimatedTextSection';
 import CatalogFlipSection from './CatalogFlipSection';
+import BrandChoiceSection from './BrandChoiceSection';
 import Footer from '../Layout/Footer';
 
 const CATEGORIES = [
@@ -355,6 +356,8 @@ const LandingPage = () => {
             </div>
           )}
         </section>
+
+        <BrandChoiceSection />
 
         <AnimatedTextSection />
 
