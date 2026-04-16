@@ -28,7 +28,7 @@ const ModernHero = () => {
   const marqueeCards = [...cards, ...cards, ...cards];
 
   return (
-    <section className="relative bg-transparent overflow-hidden pt-12 pb-0 flex flex-col items-center">
+    <section className="relative bg-transparent overflow-hidden pt-6 pb-0 flex flex-col items-center">
       
         <div 
           className="absolute inset-0 opacity-[0.02] mix-blend-multiply z-10 pointer-events-none" 
@@ -140,8 +140,8 @@ const ModernHero = () => {
         </motion.div>
       </div>
 
-      {/* Compact Clustered Marquee - Reduced height */}
-      <div className="w-full -mt-12 relative h-[220px] overflow-hidden flex flex-col justify-end pb-4">
+      {/* Ultra-Compact Marquee - Professional alignment */}
+      <div className="w-full -mt-12 relative h-[140px] overflow-hidden flex flex-col justify-end pb-4">
         <div className="flex overflow-hidden mb-0">
           <div 
             className="flex gap-10 items-end animate-marquee shadow-none"
