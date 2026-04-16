@@ -475,10 +475,14 @@ const LandingContentManager = () => {
                     </div>
                   </div>
 
-                  {/* Preview Icon */}
                   <div className="absolute right-2 top-24 opacity-10 pointer-events-none transition-opacity group-hover:opacity-20">
-                    {card.image_url ? (
-                      <img src={card.image_url} alt="" className="w-16 h-16 object-cover rounded-lg rotate-12" />
+                    {card.image_url && !card.image_url.includes('undefined') ? (
+                      <img 
+                        src={card.image_url} 
+                        alt="" 
+                        className="w-16 h-16 object-cover rounded-lg rotate-12"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
                     ) : (
                       <Layout className="w-16 h-16" />
                     )}
@@ -522,8 +526,13 @@ const LandingContentManager = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <div className="aspect-[3/4] bg-gray-100 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-inner border border-gray-200 dark:border-gray-600">
-                         {img.image_url ? (
-                           <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                         {img.image_url && !img.image_url.includes('undefined') ? (
+                           <img 
+                            src={img.image_url} 
+                            alt="" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=Invalid+URL'; }}
+                           />
                          ) : (
                            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 space-y-2">
                              <ImageIcon className="w-12 h-12 opacity-10" />

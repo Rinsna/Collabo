@@ -212,36 +212,8 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white/95 relative overflow-hidden selection:bg-primary-100 selection:text-primary-900">
       <LandingNavbar onSearch={handleSearch} />
 
-      {/* Vibrant Branded Glassmorphic Background Blobs */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <motion.div 
-          animate={{ 
-            x: [0, 60, 0], 
-            y: [0, 40, 0],
-            scale: [1, 1.25, 1] 
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-[10%] -left-[10%] w-[80%] h-[80%] bg-[#8915A0]/15 rounded-full blur-[120px]" 
-        />
-        <motion.div 
-          animate={{ 
-            x: [0, -60, 0], 
-            y: [0, -40, 0],
-            scale: [1, 1.3, 1] 
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[10%] -right-[5%] w-[70%] h-[70%] bg-[#EC4899]/12 rounded-full blur-[100px]" 
-        />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.3, 1],
-            opacity: [0.08, 0.15, 0.08]
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-primary-200/20 rounded-full blur-[140px]" 
-        />
-        <div className="absolute inset-0 backdrop-blur-[60px] bg-white/10" />
-      </div>
+      {/* Performance Optimized Background - ModernHero handles hero blurs */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[#FDFCFE]" />
 
       <div className="relative z-10 font-sans">
         <ModernHero />

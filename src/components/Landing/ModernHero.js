@@ -178,19 +178,16 @@ const ModernHero = () => {
       <div className="w-full -mt-24 relative h-[360px] overflow-hidden flex flex-col justify-end pb-4">
         <div className="flex overflow-hidden mb-0">
           <div 
-            className="flex gap-6 sm:gap-10 items-end animate-marquee shadow-none"
+            className="flex gap-10 items-end animate-marquee shadow-none"
             style={{ willChange: "transform" }}
           >
             {marqueeCards.map((card, index) => {
               const baseIndex = index % (cards.length || 1);
               
-              const sizeMap = {
-                small: "w-28 h-28 sm:w-32 sm:h-32",
-                medium: "w-36 h-36 sm:w-40 sm:h-40",
-                large: "w-40 h-40 sm:w-44 sm:h-44",
-              };
+              // Standardized width for glitch-free marquee looping
+              const cardWidth = "w-[160px] sm:w-[180px]";
+              const cardHeight = "h-[160px] sm:h-[180px]";
               
-              const cardSize = sizeMap[card.card_size] || sizeMap.medium;
               const offsets = ["mb-4", "mb-12", "mb-0", "mb-16", "mb-6", "mb-20", "mb-2"];
               const offset = offsets[baseIndex % offsets.length];
               
@@ -202,14 +199,14 @@ const ModernHero = () => {
               return (
                 <div 
                   key={index}
-                  className={`relative flex-shrink-0 ${cardSize} ${offset} group cursor-pointer transition-all duration-500 hover:z-40`}
+                  className={`relative flex-shrink-0 ${cardWidth} ${cardHeight} ${offset} group cursor-pointer transition-all duration-500 hover:z-40`}
                 >
                   <div 
                     style={getBgStyle(card.background_color)}
-                    className={`w-full h-full rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.06)] border border-white/60 relative transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl ${bgClass || 'bg-white'}`}
+                    className={`w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.06)] border border-white/60 relative transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl ${bgClass || 'bg-white'}`}
                   >
-                    {!card.image_url ? (
-                      <div className="w-full h-full flex items-center justify-center p-6 text-center">
+                    {!card.image_url || card.image_url.includes('undefined') || card.image_url.includes('null') ? (
+                      <div className="w-full h-full flex items-center justify-center p-6 text-center bg-gradient-to-br from-primary-50 to-accent-50">
                         <span 
                           style={getTextStyle(card.text_color)}
                           className={`font-black text-[10px] sm:text-[11px] uppercase tracking-tighter leading-tight ${textClass || 'text-gray-900'}`}
@@ -223,11 +220,15 @@ const ModernHero = () => {
                           src={card.image_url} 
                           alt={card.label} 
                           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                          onError={(e) => {
+                            // Fallback to label if image fails to load
+                            e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center p-6 text-center bg-gradient-to-br from-primary-50 to-accent-50"><span class="font-black text-[10px] uppercase tracking-tighter leading-tight text-gray-900">${card.label}</span></div>`;
+                          }}
                         />
                       </div>
                     )}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2rem] sm:rounded-[2.5rem]" />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2.5rem]" />
                 </div>
               );
             })}
@@ -238,7 +239,7 @@ const ModernHero = () => {
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes marquee {
           0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-33.333333%, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
         }
         .animate-marquee {
           animation: marquee 60s linear infinite;
