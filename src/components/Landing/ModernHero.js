@@ -150,9 +150,9 @@ const ModernHero = () => {
             {marqueeCards.map((card, index) => {
               const baseIndex = index % (cards.length || 1);
               
-              // Ultra-minimal card sizes
-              const cardWidth = "w-[100px] sm:w-[120px]";
-              const cardHeight = "h-[100px] sm:h-[120px]";
+              // Ultra-refined badge sizes
+              const cardWidth = "w-[80px] sm:w-[100px]";
+              const cardHeight = "h-[80px] sm:h-[100px]";
               
               const offsets = ["mb-4", "mb-12", "mb-0", "mb-16", "mb-6", "mb-20", "mb-2"];
               const offset = offsets[baseIndex % offsets.length];
