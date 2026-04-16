@@ -51,7 +51,7 @@ const CatalogFlipSection = () => {
   return (
     <div 
       onMouseMove={handleMouseMove}
-      className="relative w-full bg-white py-20 sm:py-32 overflow-hidden flex flex-col items-center justify-center min-h-[650px] sm:min-h-[850px]"
+      className="relative w-full bg-white py-16 overflow-hidden flex flex-col items-center justify-center min-h-[500px] sm:min-h-[650px]"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Premium White & Purple Background */}
@@ -74,7 +74,7 @@ const CatalogFlipSection = () => {
       </div>
 
       {/* Main Container for the Interactive Stack */}
-      <div className="relative w-full h-[550px] sm:h-[700px] flex items-center justify-center perspective-[3500px]">
+      <div className="relative w-full h-[400px] sm:h-[550px] flex items-center justify-center perspective-[3500px]">
         <div className="absolute inset-0 flex items-center justify-center">
            {catalogImages.map((card, i) => {
              let offset = i - index;
@@ -101,15 +101,15 @@ const CatalogFlipSection = () => {
                  }}
                  initial={{ opacity: 0, x: 400, scale: 0.8 }}
                  animate={{ 
-                   x: (offset * 115) + (mousePos.x * (1 - absOffset * 0.1)), 
-                   // Fix for 'rectangle' issue: push off-center cards down and pull center up in generous container
-                   y: (hoverActive ? -100 : (isCenter ? -80 : 80 + absOffset * 20)) + (mousePos.y * (1 - absOffset * 0.1)), 
-                   scale: (isCenter ? 1.15 : 0.95 - (absOffset * 0.05)),
+                   x: (offset * 110) + (mousePos.x * (1 - absOffset * 0.1)), 
+                   // Uniform alignment: Reverting the 'popup' lift
+                   y: (hoverActive ? -40 : (absOffset * 12)) + (mousePos.y * (1 - absOffset * 0.1)), 
+                   scale: (isCenter ? 1.05 : 1.0 - (absOffset * 0.05)),
                    rotateY: 0, 
                    rotateX: (mousePos.y * -0.5),
                    rotateZ: 0, 
                    opacity: 1, 
-                   z: isCenter ? 350 : -absOffset * 150,
+                   z: isCenter ? 250 : -absOffset * 150,
                  }}
                  whileTap={{ scale: 1.1, cursor: 'grabbing' }}
                  onHoverStart={() => setIsHovered(i)}
@@ -124,14 +124,14 @@ const CatalogFlipSection = () => {
                     animate={{ y: [0, -1, 0] }}
                     transition={{ duration: 1.0, repeat: Infinity, ease: "easeInOut", delay: i * 0.05 }}
                   >
-                     <div className={`relative w-full h-full rounded-[3rem] sm:rounded-[4rem] overflow-hidden transition-all duration-700 
+                     <div className={`relative w-full h-full rounded-[3.5rem] sm:rounded-[4.5rem] overflow-hidden transition-all duration-700 
                        ${isCenter 
-                         ? 'shadow-[0_80px_150px_-40px_rgba(137,21,160,0.3)] bg-white/90 backdrop-blur-xl' 
-                         : 'shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] bg-white/40 backdrop-blur-md'
+                         ? 'shadow-[0_60px_100px_-20px_rgba(137,21,160,0.2)] bg-white/90 backdrop-blur-xl' 
+                         : 'shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] bg-white/40 backdrop-blur-md'
                        } 
                        ${hoverActive ? 'shadow-primary-300' : ''}`}
                      >
-                       <div className="w-full h-full rounded-[2.8rem] sm:rounded-[3.8rem] overflow-hidden m-0">
+                       <div className="w-full h-full rounded-[3.3rem] sm:rounded-[4.3rem] overflow-hidden m-0">
                         <img 
                           src={card?.image_url || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop'} 
                           alt=""
