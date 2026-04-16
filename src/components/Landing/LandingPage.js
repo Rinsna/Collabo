@@ -135,7 +135,7 @@ const InfluencerCarouselRow = ({ influencers, onInfluencerClick }) => {
           <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700 hover:text-accent-600" />
         </button>
       )}
-    </div>
+    </motion.div>
   );
 };
 
