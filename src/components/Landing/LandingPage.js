@@ -40,7 +40,19 @@ const InfluencerCarouselRow = ({ influencers, onInfluencerClick }) => {
   if (influencers.length === 0) return null;
 
   return (
-    <div className="relative group/carousel w-full py-4 px-4 sm:px-14 scroll-animate opacity-0 transition-opacity duration-1000 mb-6 sm:mb-8">
+    <motion.div 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: { staggerChildren: 0.1 }
+        }
+      }}
+      className="relative group/carousel w-full py-4 px-4 sm:px-14 mb-6 sm:mb-8"
+    >
       {currentIndex > 0 && (
         <button 
           onClick={handlePrev}
@@ -52,9 +64,16 @@ const InfluencerCarouselRow = ({ influencers, onInfluencerClick }) => {
       
       <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-6 h-auto sm:h-[450px]">
         {displayed.map((influencer, index) => (
-          <div key={influencer.id} onClick={() => onInfluencerClick(influencer)}
-            className="cursor-pointer group relative flex-1 hover:flex-[3] transition-all duration-700 ease-in-out rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl border border-gray-100/50 min-h-[400px] sm:min-h-0"
-            style={{ animationDelay: `${index * 0.05}s` }}>
+          <motion.div 
+            key={influencer.id} 
+            onClick={() => onInfluencerClick(influencer)}
+            variants={{
+              hidden: { opacity: 0, scale: 0.9, y: 20 },
+              visible: { opacity: 1, scale: 1, y: 0 }
+            }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            className="cursor-pointer group relative flex-1 hover:flex-[3] transition-all duration-700 ease-in-out rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl border border-white/40 min-h-[400px] sm:min-h-0"
+          >
             
             <div className="absolute inset-0 bg-gray-100">
               {influencer.profile_image ? (
@@ -359,13 +378,33 @@ const LandingPage = () => {
                 { icon: Target, title: 'Targeted Reach', content: 'Filter by category, followers, and engagement to find the perfect match for your brand.', color: 'primary' },
                 { icon: CheckCircle, title: 'Verified Profiles', content: 'All creators are verified with real-time follower counts and authentic engagement metrics.', color: 'green' }
               ].map((feature, i) => (
-                <div key={i} className="bg-white/40 backdrop-blur-md rounded-[32px] p-8 border border-white/60 hover:border-primary-200 hover:shadow-[0_20px_50px_rgba(137,21,160,0.08)] transition-all duration-300 transform hover:-translate-y-2 group shadow-sm">
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ 
+                    y: -10,
+                    scale: 1.02,
+                    boxShadow: "0 25px 50px -12px rgba(137, 21, 160, 0.15)"
+                  }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 400, 
+                    damping: 25,
+                    delay: i * 0.1
+                  }}
+                  viewport={{ once: true }}
+                  className="bg-white/40 backdrop-blur-md rounded-[32px] p-8 border border-white/60 hover:border-primary-200 transition-all duration-300 group shadow-sm relative overflow-hidden"
+                >
+                  {/* Decorative Glow Pulse On Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 via-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-accent-500/5 transition-all duration-700" />
+                  
                   <div className={`w-16 h-16 bg-${feature.color}-50 rounded-2xl mb-6 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner`}>
                     <feature.icon className={`h-8 w-8 text-${feature.color}-500`} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
                   <p className="text-gray-600 leading-relaxed text-lg">{feature.content}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>

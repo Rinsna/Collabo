@@ -38,24 +38,30 @@ const ModernHero = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center flex flex-col items-center mb-0">
         
-        {/* Headline - Improved with Dynamic Gradient Support */}
+        {/* Cinematic Word-by-Word Reveal */}
         <motion.h1 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.9] mb-4 text-black max-w-4xl"
         >
-          {hero.title.split('\n').map((line, i) => {
-            // Support {Gradient Text} syntax
-            const parts = line.split(/({.*?})/);
-            return (
-              <span key={i} className="block overflow-visible">
-                {parts.map((part, index) => {
-                  if (part.startsWith('{') && part.endsWith('}')) {
-                    const text = part.slice(1, -1);
-                    return (
+          {hero.title.split('\n').map((line, lineIndex) => (
+            <div key={lineIndex} className="block overflow-hidden py-1">
+              {line.split(' ').map((word, wordIndex) => {
+                const isGradient = word.startsWith('{') || word.endsWith('}');
+                const cleanWord = word.replace(/{|}/g, '');
+                
+                return (
+                  <motion.span
+                    key={`${lineIndex}-${wordIndex}`}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{
+                      duration: 0.8,
+                      delay: 0.2 + (lineIndex * 5 + wordIndex) * 0.08,
+                      ease: [0.215, 0.61, 0.355, 1]
+                    }}
+                    className="inline-block mr-[0.2em]"
+                  >
+                    {isGradient || cleanWord === 'Collabo' ? (
                       <span 
-                        key={index}
                         style={{
                           background: 'linear-gradient(to right, #8915A0, #DB2777, #8915A0)',
                           WebkitBackgroundClip: 'text',
@@ -63,61 +69,37 @@ const ModernHero = () => {
                           backgroundClip: 'text',
                           backgroundSize: '200% auto',
                           color: 'transparent',
-                          paddingBottom: '0.1em'
                         }}
                         className="animate-gradient-x inline-block"
                       >
-                        {text}
+                        {cleanWord}
                       </span>
-                    );
-                  }
-                  // Fallback for previous split logic if no { } found
-                  if (!line.includes('{') && line.includes('Collabo') && i === 1) {
-                     const subParts = line.split('Collabo');
-                     return (
-                       <React.Fragment key={index}>
-                         {subParts[0]}
-                         <span 
-                            style={{
-                              background: 'linear-gradient(to right, #8915A0, #DB2777, #8915A0)',
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
-                              backgroundClip: 'text',
-                              backgroundSize: '200% auto',
-                              color: 'transparent',
-                              paddingBottom: '0.1em'
-                            }}
-                            className="animate-gradient-x inline-block"
-                          >
-                            Collabo
-                          </span>
-                          {subParts[1]}
-                       </React.Fragment>
-                     );
-                  }
-                  return <span key={index} className="text-black">{part}</span>;
-                })}
-              </span>
-            );
-          })}
+                    ) : (
+                      cleanWord
+                    )}
+                  </motion.span>
+                );
+              })}
+            </div>
+          ))}
         </motion.h1>
 
-        {/* Subtitle */}
+        {/* Subtitle with fade-in-scale */}
         <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 1 }}
-          className="max-w-xl mx-auto text-sm sm:text-base text-gray-400 mb-6 sm:mb-8 leading-relaxed font-medium"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1, duration: 1.2, ease: "easeOut" }}
+          className="max-w-xl mx-auto text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 leading-relaxed font-medium"
         >
           {hero.subtitle}
         </motion.p>
 
-        {/* CTAs */}
+        {/* CTAs with kinetic feel */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full sm:w-auto"
+          transition={{ delay: 1.4, duration: 0.8 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto"
         >
           <button 
             onClick={() => navigate('/register?type=influencer')}
@@ -125,15 +107,17 @@ const ModernHero = () => {
               background: 'linear-gradient(to right, #8915A0, #DB2777, #8915A0)',
               backgroundSize: '200% auto',
             }}
-            className="group relative w-full sm:w-auto px-6 py-3 text-white rounded-full font-black text-sm transition-all duration-300 shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-3 animate-gradient-x"
+            className="group relative w-full sm:w-auto px-8 py-4 text-white rounded-full font-black text-sm transition-all duration-300 shadow-[0_10px_30px_rgba(137,21,160,0.3)] hover:shadow-[0_15px_40px_rgba(137,21,160,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center space-x-3 animate-gradient-x overflow-hidden"
           >
-            <span>{hero.creator_button_text}</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            {/* Liquid Shine Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer transition-transform" />
+            <span className="relative z-10">{hero.creator_button_text}</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
           </button>
           
           <button 
             onClick={() => navigate('/register?type=company')}
-            className="w-full sm:w-auto px-6 py-3 bg-white hover:bg-gray-50 border-2 border-gray-100 text-gray-900 rounded-full font-black text-sm transition-all duration-300 shadow-lg"
+            className="w-full sm:w-auto px-8 py-4 bg-white/40 backdrop-blur-md hover:bg-white border-2 border-white/50 text-gray-900 rounded-full font-black text-sm transition-all duration-300 shadow-xl hover:scale-105 active:scale-95"
           >
             {hero.brand_button_text}
           </button>
@@ -218,6 +202,13 @@ const ModernHero = () => {
         }
         .animate-gradient-x {
           animation: gradient-x 15s ease infinite;
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-shimmer {
+          animation: shimmer 2s infinite ease-in-out;
         }
       `}} />
     </section>
